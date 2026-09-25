@@ -1,0 +1,29 @@
+name: TahadiAlJamaa
+options:
+  bundleIdPrefix: com.tahadi
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+    IPHONEOS_DEPLOYMENT_TARGET: 16.0
+targets:
+  TahadiAlJamaa:
+    type: application
+    platform: iOS
+    sources:
+      - path: TahadiAlJamaa
+    resources:
+      - path: ../index.html
+      - path: ../assets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tahadi.aljamaa
+        PRODUCT_NAME: "تحدي الجمعة"
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_FILE: TahadiAlJamaa/Info.plist
+    scheme:
+      testTargets: []
