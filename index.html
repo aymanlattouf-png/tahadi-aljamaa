@@ -25,54 +25,242 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 function haptic(kind='light'){try{if(window.webkit?.messageHandlers?.haptics)window.webkit.messageHandlers.haptics.postMessage(kind);else if(navigator.vibrate)navigator.vibrate(kind==='success'?[30,40,30]:kind==='error'?[60]:20)}catch(e){}} function goCategories(){saveLastSetup();clearTimer();stopAll();show('categories');syncAll();play('transition')} function pickCat(el){stopAll();el.classList.toggle('selected');haptic('light');syncAll();play('transition')} function toggleAll(){stopAll();let els=[...document.querySelectorAll('.cat')],all=els.every(x=>x.classList.contains('selected'));els.forEach(x=>x.classList.toggle('selected',!all));haptic('light');syncAll();play('transition')} function syncAll(){let els=[...document.querySelectorAll('.cat')],n=els.filter(x=>x.classList.contains('selected')).length;document.getElementById('allBtn').textContent=els.every(x=>x.classList.contains('selected'))?'إلغاء اختيار الكل':'اختيار الكل';const sc=document.getElementById('selectionCount');if(sc)sc.textContent=n+' مختارة'}
 const Q=[];
 function stableId(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}return 'q_'+(h>>>0).toString(36)}
-function add(cat,q,a,min=0,topic='',type='direct'){const id=stableId(cat+'|'+q+'|'+a);const topicId=topic||stableId(cat+'|'+String(a).replace(/[\s،.؟!]/g,'').toLowerCase());Q.push({id,cat,q,a,min,topicId,type})}
-[['ما عاصمة المملكة العربية السعودية؟','الرياض'],['كم عدد أيام الأسبوع؟','7 أيام'],['ما الكوكب المعروف بالكوكب الأحمر؟','المريخ'],['ما أكبر محيط في العالم؟','المحيط الهادئ'],['ما الحيوان الملقب بسفينة الصحراء؟','الجمل'],['كم عدد القارات؟','7 قارات'],['ما أسرع حيوان بري؟','الفهد'],['ما الغاز الذي نتنفسه ويحتاجه الجسم؟','الأكسجين'],['ما أكبر كوكب في المجموعة الشمسية؟','المشتري'],['ما اللغة الرسمية في البرازيل؟','البرتغالية'],['ما الحيوان الذي يغيّر لونه للتمويه؟','الحرباء'],['ما اسم العملية التي تصنع بها النباتات غذاءها؟','البناء الضوئي']].forEach((x,i)=>add('general',x[0],x[1],Math.min(4,Math.floor(i/3))));
-[['🇸🇦','السعودية'],['🇪🇬','مصر'],['🇯🇵','اليابان'],['🇫🇷','فرنسا'],['🇮🇹','إيطاليا'],['🇨🇦','كندا'],['🇧🇷','البرازيل'],['🇦🇺','أستراليا'],['🇹🇷','تركيا'],['🇲🇦','المغرب'],['🇩🇪','ألمانيا'],['🇰🇷','كوريا الجنوبية'],['🇮🇳','الهند'],['🇦🇷','الأرجنتين'],['🇪🇸','إسبانيا']].forEach((x,i)=>add('flags',`لأي دولة يعود هذا العلم؟ ${x[0]}`,x[1],Math.min(4,Math.floor(i/4))));
-for(let i=1;i<=45;i++){let min=Math.min(4,Math.floor((i-1)/10));let a=3+i%12,b=2+(i*2)%11;if(i%3===0)add('math',`كم يساوي ${a} × ${b}؟`,String(a*b),min);else if(i%3===1)add('math',`كم يساوي ${a+b} + ${b}؟`,String(a+2*b),min);else add('math',`كم يساوي ${a+b+10} − ${a}؟`,String(b+10),min)}
-const WORD_Q=[
-['اذكر اسم شخص يبدأ بحرف «أ»','أحمد',0,'person_a','person'],
-['اذكر دولة تبدأ بحرف «م»','مصر',0,'country_m','country'],
-['اذكر حيوانًا يبدأ بحرف «أ»','أسد',0,'animal_a','animal'],
-['اذكر فاكهة تبدأ بحرف «ت»','تفاح',0,'fruit_t','fruit'],
-['اذكر مدينة تبدأ بحرف «ج»','جدة',0,'city_j','city'],
-['اذكر مهنة تبدأ بحرف «ط»','طبيب',0,'job_t','job'],
-['اذكر اسم شخص يبدأ بحرف «س»','سارة',0,'person_s','person'],
-['اذكر دولة تبدأ بحرف «ل»','لبنان',0,'country_l','country'],
-['اذكر حيوانًا يبدأ بحرف «ن»','نمر',0,'animal_n','animal'],
-['اذكر فاكهة تبدأ بحرف «ر»','رمان',0,'fruit_r','fruit'],
-['اذكر مدينة تبدأ بحرف «ر»','رياض',0,'city_r','city'],
-['اذكر مهنة تبدأ بحرف «م»','مهندس',0,'job_m','job'],
-['ما الحرف الأول في كلمة «قمر»؟','ق',0,'first_qamar','first_letter'],
-['ما الحرف الأخير في كلمة «كتاب»؟','ب',0,'last_kitab','last_letter'],
-['كوّن كلمة من الحروف: ب، ا، ب','باب',0,'form_bab','form_word'],
-['أكمل الكلمة: مـ _ ـرسة','د — مدرسة',0,'complete_school','complete_word'],
-['ما الكلمة المختلفة: تفاح، موز، برتقال، سيارة؟','سيارة',0,'odd_fruit_car','odd_one'],
-['اذكر كلمتين تبدأان بحرف «ب»','مثل: باب، بحر',0,'two_b','two_words'],
-['اذكر حيوانًا يبدأ بحرف «ف»','فيل',0,'animal_f','animal'],
-['اذكر فاكهة تبدأ بحرف «م»','مانجو',0,'fruit_m','fruit'],
-['اذكر دولة تبدأ بحرف «ت»','تونس',0,'country_t','country'],
-['اذكر مدينة تبدأ بحرف «م»','مكة',0,'city_m','city'],
-['اذكر مهنة تبدأ بحرف «م»','معلم',0,'job_teacher','job'],
-['ما الحرف الأول في كلمة «شمس»؟','ش',0,'first_shams','first_letter'],
-['ما الحرف الأخير في كلمة «قلم»؟','م',0,'last_qalam','last_letter'],
-['كوّن كلمة من الحروف: ق، ل، م','قلم',0,'form_qalam','form_word'],
-['أكمل الكلمة: سـ _ ـارة','ي — سيارة',0,'complete_car','complete_word'],
-['ما الكلمة المختلفة: أسد، نمر، فيل، كتاب؟','كتاب',0,'odd_animals_book','odd_one'],
-['اذكر كلمتين تنتهيان بحرف «ة»','مثل: شجرة، مدرسة',1,'end_taa','two_words'],
-['اذكر اسمًا يبدأ بحرف «ن»','نورة',1,'person_n','person'],
-['اذكر دولة تبدأ بحرف «س»','سوريا',1,'country_s','country'],
-['اذكر حيوانًا يبدأ بحرف «ث»','ثعلب',1,'animal_th','animal'],
-['اذكر فاكهة تبدأ بحرف «ب»','برتقال',1,'fruit_b','fruit'],
-['اذكر مدينة تبدأ بحرف «د»','دبي',1,'city_d','city'],
-['اذكر مهنة تبدأ بحرف «ص»','صيدلي',1,'job_s','job'],
-['ما الحرف الأول في كلمة «بحر»؟','ب',1,'first_bahr','first_letter'],
-['ما الحرف الأخير في كلمة «طريق»؟','ق',1,'last_tariq','last_letter'],
-['كوّن كلمة من الحروف: ب، ح، ر','بحر',1,'form_bahr','form_word'],
-['ما الكلمة المختلفة: جدة، الرياض، مكة، تفاح؟','تفاح',1,'odd_cities_fruit','odd_one']
-];
-WORD_Q.forEach(x=>add('words',x[0],x[1],x[2],x[3],x[4]));
-const speeds=[['اذكر ثلاثة ألوان','أي ثلاثة ألوان صحيحة'],['اذكر ثلاث فواكه','أي ثلاث فواكه'],['اذكر ثلاث دول عربية','أي ثلاث دول عربية'],['اذكر أربعة حيوانات','أي أربعة حيوانات'],['اذكر ثلاثة أشياء في المطبخ','أي ثلاثة أشياء مناسبة'],['اذكر ثلاثة أسماء تبدأ بحرف الميم','أي ثلاثة أسماء صحيحة'],['اذكر خمسة أرقام زوجية','مثل: 2، 4، 6، 8، 10'],['اذكر ثلاث مدن سعودية','أي ثلاث مدن سعودية'],['اذكر ثلاثة أشياء لونها أخضر','أي ثلاثة أمثلة صحيحة'],['اذكر أربعة أشياء يمكن شربها','أي أربعة أمثلة مناسبة']];for(let r=0;r<3;r++)speeds.forEach((x,i)=>add('speed',x[0],x[1],Math.min(4,r+Math.floor(i/5))));
-[['من هو خاتم الأنبياء والمرسلين؟','محمد ﷺ'],['إلى أي مدينة هاجر النبي ﷺ؟','المدينة المنورة'],['ما اسم والد النبي ﷺ؟','عبدالله بن عبدالمطلب'],['ما اسم والدة النبي ﷺ؟','آمنة بنت وهب'],['من أول الخلفاء الراشدين؟','أبو بكر الصديق رضي الله عنه'],['من ثاني الخلفاء الراشدين؟','عمر بن الخطاب رضي الله عنه'],['من ثالث الخلفاء الراشدين؟','عثمان بن عفان رضي الله عنه'],['من رابع الخلفاء الراشدين؟','علي بن أبي طالب رضي الله عنه'],['ما اسم الغار الذي نزل فيه الوحي أول مرة؟','غار حراء'],['في أي شهر يصوم المسلمون؟','رمضان'],['كم عدد الصلوات المفروضة في اليوم؟','خمس صلوات'],['ما قبلة المسلمين؟','الكعبة المشرفة'],['ما اسم الكتاب الذي أنزله الله على النبي محمد ﷺ؟','القرآن الكريم'],['من الصحابي الذي رافق النبي ﷺ في الهجرة؟','أبو بكر الصديق رضي الله عنه'],['ما المدينة التي وُلد فيها النبي ﷺ؟','مكة المكرمة'],['ما اسم أول مسجد بناه النبي ﷺ عند الهجرة؟','مسجد قباء'],['ما اسم زوجة النبي ﷺ الأولى؟','خديجة بنت خويلد رضي الله عنها'],['ما اسم عم النبي ﷺ الذي نصره وحماه؟','أبو طالب'],['ما اسم المعركة التي كانت أول معركة كبرى للمسلمين؟','غزوة بدر'],['ما اسم الليلة التي أُسري فيها بالنبي ﷺ من المسجد الحرام إلى المسجد الأقصى؟','ليلة الإسراء والمعراج']].forEach((x,i)=>add('islamic',x[0],x[1],Math.min(4,Math.floor(i/5))));
+function add(cat,q,a,level=1,minAge=0,maxAge=4,topic='',type='direct'){const id=stableId(cat+'|'+q+'|'+a);const topicId=topic||stableId(cat+'|'+String(a).replace(/[\s،.؟!]/g,'').toLowerCase());Q.push({id,cat,q,a,level,minAge,maxAge,topicId,type})}
+function addMany(cat,rows){rows.forEach((x,i)=>add(cat,x[0],x[1],x[2],x[3],x[4],x[5]||cat+'_'+i,x[6]||'direct'))}
+
+/* معلومات عامة — السهل محصور بالصغار ولا يُمرَّر تلقائيًا للكبار */
+addMany('general',[
+['ما عاصمة المملكة العربية السعودية؟','الرياض',1,0,0,'ksa_capital','capital'],
+['ما الكوكب المعروف بالكوكب الأحمر؟','المريخ',1,0,0,'mars','science'],
+['كم عدد أشهر السنة؟','12 شهرًا',1,0,0,'months','number'],
+['ما أكبر كوكب في المجموعة الشمسية؟','المشتري',2,0,1,'jupiter','science'],
+['ما الحيوان الملقب بسفينة الصحراء؟','الجمل',1,0,0,'camel','animal'],
+['ما العضو الذي يضخ الدم في جسم الإنسان؟','القلب',1,0,0,'heart','body'],
+['عند كم درجة مئوية يتجمد الماء عادة؟','0° مئوية',2,0,1,'freezing','science'],
+['ما أكبر محيط في العالم؟','المحيط الهادئ',2,0,1,'pacific','geography'],
+['ما أسرع حيوان بري؟','الفهد',2,0,1,'cheetah','animal'],
+['ما عاصمة مصر؟','القاهرة',1,0,0,'egypt_capital','capital'],
+['ما اسم العملية التي تصنع بها النباتات غذاءها؟','البناء الضوئي',2,0,1,'photosynthesis','science'],
+['أي كوكب هو الأقرب إلى الشمس؟','عطارد',2,0,1,'mercury','science'],
+['ما اللغة الرسمية في البرازيل؟','البرتغالية',2,0,1,'brazil_language','culture'],
+['ما القارة التي تقع فيها السعودية؟','آسيا',1,0,0,'ksa_continent','geography'],
+['كم عدد أضلاع الشكل السداسي؟','6 أضلاع',2,0,1,'hexagon','number'],
+['ما عاصمة اليابان؟','طوكيو',2,0,2,'japan_capital','capital'],
+['ما العنصر الذي رمزه الكيميائي O؟','الأكسجين',2,1,2,'oxygen_symbol','science'],
+['أي قارة تضم دولة الأرجنتين؟','أمريكا الجنوبية',2,1,2,'argentina_continent','geography'],
+['ما عاصمة كندا؟','أوتاوا',3,1,2,'canada_capital','capital'],
+['ما اسم أكبر عضو في جسم الإنسان؟','الجلد',3,1,2,'largest_organ','body'],
+['ما الغاز الأكثر وجودًا في الغلاف الجوي للأرض؟','النيتروجين',3,1,3,'nitrogen','science'],
+['أي دولة عاصمتها أنقرة؟','تركيا',2,1,2,'ankara','capital'],
+['ما العملة الرسمية لليابان؟','الين',2,1,2,'yen','culture'],
+['ما اسم الطبقة التي تحمينا من معظم الأشعة فوق البنفسجية؟','طبقة الأوزون',3,1,3,'ozone','science'],
+['ما المضيق الذي يفصل آسيا عن أمريكا الشمالية؟','مضيق بيرينغ',4,2,4,'bering','geography'],
+['ما العنصر الذي رمزه Au؟','الذهب',3,2,4,'gold_symbol','science'],
+['أي كوكب يشتهر بحلقاته الواضحة؟','زحل',3,1,3,'saturn','science'],
+['ما عاصمة أستراليا؟','كانبرا',3,1,4,'australia_capital','capital'],
+['ما أصغر عظمة في جسم الإنسان؟','عظمة الركاب في الأذن',4,2,4,'stapes','body'],
+['أي كوكب يدور تقريبًا على جانبه؟','أورانوس',4,2,4,'uranus','science'],
+['ما الوحدة الأساسية لقياس شدة التيار الكهربائي؟','الأمبير',4,2,4,'ampere','science'],
+['ما اسم أكبر قمر لكوكب زحل؟','تيتان',5,3,4,'titan','science'],
+['أي دولة أوروبية عاصمتها ليوبليانا؟','سلوفينيا',5,3,4,'slovenia_capital','capital'],
+['ما العنصر الأكثر وفرة في الشمس؟','الهيدروجين',4,2,4,'sun_hydrogen','science'],
+['ما اسم الخط الوهمي عند خط عرض صفر؟','خط الاستواء',3,1,3,'equator','geography'],
+['ما الجهاز الذي يقيس الضغط الجوي؟','البارومتر',4,2,4,'barometer','science'],
+['أي محيط يقع بين أفريقيا وأستراليا؟','المحيط الهندي',3,1,3,'indian_ocean','geography'],
+['ما اسم التحول المباشر من الحالة الصلبة إلى الغازية؟','التسامي',5,3,4,'sublimation','science'],
+['ما العدد الأولي الزوجي الوحيد؟','2',3,1,4,'even_prime','number'],
+['أي دولة عاصمتها بوينس آيرس؟','الأرجنتين',3,1,4,'argentina_capital','capital']
+]);
+
+addMany('flags',[
+['لأي دولة يعود هذا العلم؟ 🇸🇦','السعودية',1,0,0,'flag_sa','identify'],
+['لأي دولة يعود هذا العلم؟ 🇪🇬','مصر',1,0,0,'flag_eg','identify'],
+['لأي دولة يعود هذا العلم؟ 🇯🇵','اليابان',1,0,0,'flag_jp','identify'],
+['لأي دولة يعود هذا العلم؟ 🇫🇷','فرنسا',1,0,0,'flag_fr','identify'],
+['لأي دولة يعود هذا العلم؟ 🇮🇹','إيطاليا',1,0,0,'flag_it','identify'],
+['لأي دولة يعود هذا العلم؟ 🇨🇦','كندا',1,0,0,'flag_ca','identify'],
+['لأي دولة يعود هذا العلم؟ 🇧🇷','البرازيل',1,0,0,'flag_br','identify'],
+['لأي دولة يعود هذا العلم؟ 🇹🇷','تركيا',1,0,0,'flag_tr','identify'],
+['لأي دولة يعود هذا العلم؟ 🇲🇦','المغرب',1,0,0,'flag_ma','identify'],
+['لأي دولة يعود هذا العلم؟ 🇩🇪','ألمانيا',1,0,0,'flag_de','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇬🇧','لندن',2,0,1,'flag_uk_capital','flag_capital'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇪🇸','مدريد',2,0,1,'flag_es_capital','flag_capital'],
+['في أي قارة تقع الدولة صاحبة هذا العلم؟ 🇦🇺','أوقيانوسيا / أستراليا',2,0,1,'flag_au_continent','continent'],
+['لأي دولة يعود هذا العلم؟ 🇰🇷','كوريا الجنوبية',2,0,1,'flag_kr','identify'],
+['لأي دولة يعود هذا العلم؟ 🇮🇳','الهند',2,0,1,'flag_in','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇦🇷','بوينس آيرس',3,1,3,'flag_ar_capital','flag_capital'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇨🇭','برن',3,1,3,'flag_ch_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇵🇹','البرتغال',2,1,2,'flag_pt','identify'],
+['لأي دولة يعود هذا العلم؟ 🇳🇴','النرويج',2,1,2,'flag_no','identify'],
+['لأي دولة يعود هذا العلم؟ 🇸🇪','السويد',2,1,2,'flag_se','identify'],
+['ما العملة المستخدمة في الدولة صاحبة هذا العلم؟ 🇯🇵','الين',3,1,3,'flag_jp_currency','currency'],
+['ما اللغة الرسمية الأساسية في الدولة صاحبة هذا العلم؟ 🇧🇷','البرتغالية',3,1,3,'flag_br_language','language'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇳🇿','ويلينغتون',4,2,4,'flag_nz_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇺🇾','الأوروغواي',4,2,4,'flag_uy','identify'],
+['لأي دولة يعود هذا العلم؟ 🇵🇪','بيرو',3,1,3,'flag_pe','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇫🇮','هلسنكي',4,2,4,'flag_fi_capital','flag_capital'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇭🇺','بودابست',4,2,4,'flag_hu_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇸🇮','سلوفينيا',5,3,4,'flag_si','identify'],
+['لأي دولة يعود هذا العلم؟ 🇸🇰','سلوفاكيا',5,3,4,'flag_sk','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇪🇪','تالين',5,3,4,'flag_ee_capital','flag_capital'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇱🇹','فيلنيوس',5,3,4,'flag_lt_capital','flag_capital'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇱🇻','ريغا',5,3,4,'flag_lv_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇰🇿','كازاخستان',4,2,4,'flag_kz','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇮🇸','ريكيافيك',5,3,4,'flag_is_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇨🇱','تشيلي',3,1,4,'flag_cl','identify'],
+['أي دولة يمثّل علمها ورقة القيقب؟','كندا',2,0,2,'maple_flag','clue'],
+['أي دولة أوروبية يحتوي علمها على صليب أبيض فوق خلفية حمراء؟','سويسرا',3,1,3,'swiss_flag_clue','clue'],
+['أي دولتين تشتركان تقريبًا في علمين أبيض وأحمر بترتيب معكوس؟','إندونيسيا وبولندا',5,3,4,'indo_poland','compare'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇨🇿','براغ',4,2,4,'flag_cz_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇬🇷','اليونان',3,1,4,'flag_gr','identify']
+]);
+
+[[1,0,0,[[7,5],[9,6],[12,8],[14,7],[16,9]]],[2,0,1,[[6,4],[7,8],[9,5],[12,3],[11,6]]],[3,1,2,[[12,8],[15,7],[18,6],[14,9],[16,7]]],[4,2,4,[[24,7],[18,13],[32,9],[27,14],[36,11]]]].forEach(function(row){const lvl=row[0],min=row[1],max=row[2],pairs=row[3];pairs.forEach(function(p,i){add('math','كم يساوي '+p[0]+' + '+p[1]+' × 2؟',String(p[0]+p[1]*2),lvl,min,max,'order_'+lvl+'_'+i,'order_ops');add('math','إذا كان معك '+(p[0]+p[1])+' ريالًا وصرفت '+p[1]+'، كم بقي؟',String(p[0]),lvl,min,max,'money_'+lvl+'_'+i,'mental')})});
+addMany('math',[
+['ما العدد التالي: 2، 4، 6، 8، ؟','10',1,0,0,'seq_even','sequence'],
+['ما العدد الناقص: 5، 10، 15، ؟، 25','20',2,0,1,'seq_fives','sequence'],
+['لديك 3 صناديق، في كل صندوق 4 كرات. كم كرة بالمجموع؟','12',2,0,1,'boxes','word_problem'],
+['نصف العدد 18 يساوي؟','9',2,0,1,'half18','fraction'],
+['ربع العدد 20 يساوي؟','5',2,0,1,'quarter20','fraction'],
+['ما العدد التالي: 3، 6، 12، 24، ؟','48',3,1,3,'seq_double','sequence'],
+['إذا كان 3 أقلام تكلف 12 ريالًا، فكم يكلف القلم الواحد؟','4 ريالات',3,1,2,'unit_rate','word_problem'],
+['ما متوسط الأعداد 4، 8، 12؟','8',3,1,3,'average1','average'],
+['ما 25% من 80؟','20',3,1,3,'percent25','percent'],
+['ساعة و45 دقيقة + 35 دقيقة = ؟','ساعتان و20 دقيقة',3,1,3,'time_add','time'],
+['عدد إذا ضربته في نفسه كان الناتج 81، ما هو؟','9',3,1,3,'square81','logic'],
+['ما العدد التالي: 1، 1، 2، 3، 5، 8، ؟','13',4,2,4,'fibonacci','sequence'],
+['إذا كان سعر منتج 200 ريال وعليه خصم 15%، فما السعر بعد الخصم؟','170 ريالًا',4,2,4,'discount15','percent'],
+['ما متوسط الأعداد 7، 11، 15، 19؟','13',4,2,4,'average2','average'],
+['إذا كان محيط مربع 36 سم، فما طول ضلعه؟','9 سم',4,2,4,'square_perimeter','geometry'],
+['حل ذهنيًا: 3² + 4² = ؟','25',4,2,4,'pyth_numbers','powers'],
+['إذا كانت النسبة 2:3 ومجموع الجزأين 25، فما قيمة الجزء الأكبر؟','15',5,3,4,'ratio25','ratio'],
+['ما العدد التالي: 2، 3، 5، 8، 12، 17، ؟','23',5,3,4,'diff_sequence','sequence'],
+['إذا زاد عدد من 80 إلى 100، فما نسبة الزيادة؟','25%',5,3,4,'increase_percent','percent'],
+['عدد مكوّن من رقمين؛ مجموع رقميه 9 والآحاد أكبر من العشرات بـ3. ما العدد؟','36',5,3,4,'two_digit_logic','logic'],
+['إذا كان 5 عمّال ينجزون مهمة في 12 يومًا بنفس المعدل، فكم يومًا يحتاج 10 عمّال؟','6 أيام',5,3,4,'workers','rate']
+]);
+
+addMany('words',[
+['كوّن كلمة من الحروف: ق، ل، م','قلم',1,0,0,'form_qalam','anagram'],
+['كوّن كلمة من الحروف: ب، ا، ب','باب',1,0,0,'form_bab','anagram'],
+['رتّب الحروف لتكوّن كلمة: ت، ي، ب','بيت',1,0,0,'form_bayt','anagram'],
+['ما الحرف الناقص: مـ _ ـرسة','د — مدرسة',1,0,0,'school_missing','missing'],
+['ما الحرف الناقص: سـ _ ـارة','ي — سيارة',1,0,0,'car_missing','missing'],
+['أنا شيء نقرأه، من 4 أحرف، أبدأ بـ«ك» وأنتهي بـ«ب». من أنا؟','كتاب',2,0,1,'riddle_book','word_riddle'],
+['أنا فاكهة حمراء غالبًا، اسمي يبدأ بـ«ت». من أنا؟','تفاح',1,0,0,'riddle_apple','word_riddle'],
+['اذكر حيوانين يبدأ اسماهما بحرف «ف»','مثل: فيل، فراشة',2,0,1,'two_f','constraint'],
+['اذكر ثلاث كلمات تبدأ بحرف «م» خلال 15 ثانية','أي ثلاث كلمات صحيحة',2,0,1,'three_m','constraint'],
+['ما جمع كلمة «كتاب»؟','كتب',2,0,1,'plural_book','plural'],
+['ما ضد كلمة «سريع»؟','بطيء',1,0,0,'opposite_fast','opposite'],
+['رتّب الحروف: س، ف، ي، ن، ة','سفينة',2,0,1,'ship_anagram','anagram'],
+['ما الكلمة المختلفة: دقيقة، ساعة، يوم، موز؟','موز',2,0,0,'odd_time','odd_one'],
+['اذكر دولة ومدينة كلتاهما تبدأان بحرف «م»','مثل: مصر، مكة',2,0,1,'country_city_m','constraint'],
+['ما مفرد كلمة «أشجار»؟','شجرة',2,0,1,'singular_trees','singular'],
+['رتّب الحروف لتكوّن كلمة: ب، ر، م، ج، ة','برمجة',3,1,2,'programming_anagram','anagram'],
+['ما جمع كلمة «مفتاح»؟','مفاتيح',3,1,3,'plural_key','plural'],
+['ما مفرد كلمة «مصابيح»؟','مصباح',3,1,3,'singular_lamps','singular'],
+['ما مرادف كلمة «شجاع»؟','جريء / جسور',3,1,3,'syn_brave','synonym'],
+['ما ضد كلمة «نادر»؟','شائع',3,1,3,'opp_rare','opposite'],
+['أكمل المثل: من جدّ وجد، ومن زرع ...','حصد',3,1,3,'proverb_harvest','complete'],
+['اذكر 4 كلمات تبدأ بحرف «س» من دون استخدام أسماء أشخاص','أي 4 كلمات صحيحة',3,1,3,'four_s','constraint'],
+['كوّن كلمة من 5 أحرف تبدأ بـ«م» وتنتهي بـ«ة» وتعني مكانًا للتعلّم','مدرسة',3,1,3,'riddle_school','word_riddle'],
+['ما جمع كلمة «قاضٍ»؟','قضاة',4,2,4,'plural_judge','plural'],
+['ما مفرد كلمة «معايير»؟','معيار',4,2,4,'singular_standards','singular'],
+['ما مرادف كلمة «موجز»؟','مختصر',4,2,4,'syn_brief','synonym'],
+['ما ضد كلمة «غامض»؟','واضح',4,2,4,'opp_ambiguous','opposite'],
+['اذكر 5 كلمات تنتهي بتاء مربوطة «ة» خلال 15 ثانية','أي 5 كلمات صحيحة',4,2,4,'five_taa','constraint'],
+['كلمة من 4 أحرف: تبدأ بـ«م» وتنتهي بـ«ح» وتعني مكانًا للسباحة','مسبح',3,1,3,'riddle_pool','word_riddle'],
+['ما الكلمة التي تصف شخصًا كثير الاطلاع والمعرفة؟','مثقف',4,2,4,'cultured','definition'],
+['ما جمع كلمة «مشروع»؟','مشاريع',4,2,4,'plural_project','plural'],
+['ما مفرد كلمة «نتائج»؟','نتيجة',3,1,3,'singular_results','singular'],
+['أكمل: «خير الكلام ما قلّ و...»','دلّ',4,2,4,'proverb_short','complete'],
+['اذكر 3 كلمات تحتوي حرف «ض» وليست أسماء أشخاص','أي 3 كلمات صحيحة',4,2,4,'three_dad','constraint'],
+['ما مرادف كلمة «متين» في وصف البناء؟','قوي / صلب',4,2,4,'syn_sturdy','synonym'],
+['ما ضد كلمة «مؤقت»؟','دائم',4,2,4,'opp_temporary','opposite'],
+['ما جمع كلمة «مدينة»؟','مدن',3,1,4,'plural_city','plural'],
+['اذكر 4 كلمات تبدأ بـ«استـ» خلال 15 ثانية','مثل: استخدام، استقبال، استماع، استقرار',5,3,4,'four_ist','constraint'],
+['ما مفرد كلمة «مبادئ»؟','مبدأ',5,3,4,'singular_principles','singular'],
+['ما جمع كلمة «عبء»؟','أعباء',5,3,4,'plural_burden','plural']
+]);
+
+addMany('speed',[
+['خلال 15 ثانية: اذكر 4 ألوان مختلفة','أي 4 ألوان صحيحة',1,0,0,'speed_colors4','rapid_list'],
+['اذكر 4 فواكه مختلفة','أي 4 فواكه صحيحة',1,0,0,'speed_fruit4','rapid_list'],
+['اذكر 4 حيوانات تبدأ بأربعة أحرف مختلفة','أي إجابة صحيحة',2,0,1,'speed_animals_letters','rapid_constraint'],
+['اذكر 5 مدن سعودية','أي 5 مدن سعودية صحيحة',2,0,1,'speed_saudi_cities','rapid_list'],
+['اذكر 5 أشياء يمكن أن تجدها في المطبخ','أي 5 أشياء مناسبة',1,0,0,'speed_kitchen','rapid_list'],
+['اذكر 4 دول عربية','أي 4 دول عربية صحيحة',2,0,1,'speed_arab_countries','rapid_list'],
+['اذكر 5 أرقام زوجية من دون قول الرقم 2','أي 5 أرقام زوجية صحيحة غير 2',2,0,1,'speed_even','rapid_constraint'],
+['اذكر 4 مهن مختلفة','أي 4 مهن صحيحة',2,0,1,'speed_jobs','rapid_list'],
+['اذكر 5 كلمات تبدأ بحرف «ب»','أي 5 كلمات صحيحة',2,0,1,'speed_b_words','rapid_constraint'],
+['اذكر 4 أشياء لونها أخضر طبيعيًا','أي 4 أمثلة مناسبة',2,0,1,'speed_green','rapid_list'],
+['اذكر 6 عواصم عربية','أي 6 عواصم صحيحة',3,1,3,'speed_arab_capitals','rapid_list'],
+['اذكر 5 دول لا يبدأ اسمها بحرف الألف','أي 5 دول صحيحة',3,1,3,'speed_countries_noa','rapid_constraint'],
+['اذكر 5 حيوانات لا تعيش في البحر','أي 5 حيوانات برية صحيحة',3,1,3,'speed_land_animals','rapid_constraint'],
+['اذكر 5 كلمات من 4 أحرف بالضبط','أي 5 كلمات صحيحة',3,1,3,'speed_four_letters','rapid_constraint'],
+['اذكر 5 مدن تبدأ بخمسة أحرف مختلفة','أي 5 مدن صحيحة',3,1,3,'speed_cities_letters','rapid_constraint'],
+['اذكر 6 أشياء تستخدم الكهرباء','أي 6 أمثلة مناسبة',3,1,3,'speed_electric','rapid_list'],
+['اذكر 5 عناصر موجودة في المكتب من دون قول «قلم»','أي 5 عناصر مناسبة',3,1,3,'speed_office_no_pen','rapid_constraint'],
+['اذكر 6 دول آسيوية','أي 6 دول آسيوية صحيحة',4,2,4,'speed_asia6','rapid_list'],
+['اذكر 5 دول أفريقية لا يبدأ اسمها بحرف «م»','أي 5 دول صحيحة',4,2,4,'speed_africa_no_m','rapid_constraint'],
+['اذكر 6 كلمات تبدأ وتنتهي بحرفين مختلفين','أي 6 كلمات تحقق الشرط',4,2,4,'speed_diff_ends','rapid_constraint'],
+['اذكر 5 عواصم أوروبية','أي 5 عواصم أوروبية صحيحة',4,2,4,'speed_eu_capitals','rapid_list'],
+['اذكر 5 عناصر كيميائية','أي 5 عناصر صحيحة',4,2,4,'speed_elements','rapid_list'],
+['اذكر 4 دول جزرية','مثل: اليابان، آيسلندا، مدغشقر، إندونيسيا',4,2,4,'speed_islands','rapid_list'],
+['اذكر 5 كلمات عربية تبدأ بحرف «م» وتنتهي بحرف مختلف في كل مرة','أي 5 كلمات تحقق الشرط',5,3,4,'speed_m_diff','rapid_constraint'],
+['اذكر 5 عواصم لا تحمل اسم دولها','أي 5 إجابات صحيحة',5,3,4,'speed_capital_diff','rapid_constraint'],
+['اذكر 5 أعداد أولية أقل من 30','مثل: 2، 3، 5، 7، 11',4,2,4,'speed_primes','rapid_list'],
+['اذكر 6 كلمات من مجال التقنية','أي 6 كلمات مناسبة',4,2,4,'speed_tech','rapid_list'],
+['اذكر 5 دول يمر بها خط الاستواء','أي 5 دول صحيحة',5,3,4,'speed_equator','rapid_list'],
+['اذكر 5 وحدات قياس مختلفة وما الذي تقيسه','أي 5 أزواج صحيحة',5,3,4,'speed_units','rapid_pair'],
+['اذكر 6 عواصم آسيوية','أي 6 عواصم آسيوية صحيحة',5,3,4,'speed_asia_capitals','rapid_list']
+]);
+
+addMany('islamic',[
+['من هو خاتم الأنبياء والمرسلين؟','محمد ﷺ',1,0,0,'prophet_muhammad','basic'],
+['إلى أي مدينة هاجر النبي ﷺ؟','المدينة المنورة',1,0,0,'hijra_city','seerah'],
+['في أي شهر يصوم المسلمون؟','رمضان',1,0,0,'ramadan','basic'],
+['كم عدد الصلوات المفروضة في اليوم؟','خمس صلوات',1,0,0,'five_prayers','basic'],
+['ما قبلة المسلمين؟','الكعبة المشرفة',1,0,0,'qibla','basic'],
+['ما اسم الكتاب الذي أُنزل على النبي محمد ﷺ؟','القرآن الكريم',1,0,0,'quran','basic'],
+['ما المدينة التي وُلد فيها النبي ﷺ؟','مكة المكرمة',1,0,0,'birth_city','seerah'],
+['من أول الخلفاء الراشدين؟','أبو بكر الصديق رضي الله عنه',2,0,1,'caliph1','companions'],
+['من ثاني الخلفاء الراشدين؟','عمر بن الخطاب رضي الله عنه',2,0,1,'caliph2','companions'],
+['ما اسم الغار الذي نزل فيه الوحي أول مرة؟','غار حراء',2,0,1,'hira','seerah'],
+['ما اسم زوجة النبي ﷺ الأولى؟','خديجة بنت خويلد رضي الله عنها',2,0,1,'khadija','seerah'],
+['من الصحابي الذي رافق النبي ﷺ في الهجرة؟','أبو بكر الصديق رضي الله عنه',2,0,1,'hijra_companion','seerah'],
+['ما اسم أول مسجد بناه النبي ﷺ عند الهجرة؟','مسجد قباء',2,0,1,'quba','seerah'],
+['ما اسم المعركة التي كانت أول معركة كبرى للمسلمين؟','غزوة بدر',2,0,1,'badr','seerah'],
+['كم عدد الخلفاء الراشدين؟','أربعة',2,0,1,'rashidun_count','basic'],
+['من ثالث الخلفاء الراشدين؟','عثمان بن عفان رضي الله عنه',3,1,2,'caliph3','companions'],
+['من رابع الخلفاء الراشدين؟','علي بن أبي طالب رضي الله عنه',3,1,2,'caliph4','companions'],
+['ما أول سورة في ترتيب المصحف؟','سورة الفاتحة',2,1,3,'first_surah','quran'],
+['ما أطول سورة في القرآن الكريم؟','سورة البقرة',3,1,3,'longest_surah','quran'],
+['كم عدد الأشهر الحرم؟','أربعة أشهر',3,1,3,'sacred_months','basic'],
+['ما القبلة الأولى للمسلمين؟','المسجد الأقصى / بيت المقدس',3,1,3,'first_qibla','history'],
+['بماذا لُقّب عثمان بن عفان رضي الله عنه؟','ذو النورين',4,2,4,'uthman_title','companions'],
+['من الصحابي الملقب بالفاروق؟','عمر بن الخطاب رضي الله عنه',3,1,4,'farooq','companions'],
+['من الصحابي الملقب بسيف الله المسلول؟','خالد بن الوليد رضي الله عنه',4,2,4,'sword_allah','companions'],
+['في أي سنة هجرية وقعت غزوة بدر؟','السنة الثانية للهجرة',4,2,4,'badr_year','history'],
+['في أي سنة هجرية كان فتح مكة؟','السنة الثامنة للهجرة',4,2,4,'fath_makkah_year','history'],
+['في أي سنة هجرية كان صلح الحديبية؟','السنة السادسة للهجرة',5,3,4,'hudaybiyyah_year','history'],
+['إلى أي قبيلة كان ينتسب النبي ﷺ؟','قريش',3,1,4,'quraysh','seerah'],
+['ما اسم عم النبي ﷺ الذي كفله بعد وفاة جده؟','أبو طالب',3,1,3,'abu_talib','seerah'],
+['من أول مؤذن في الإسلام؟','بلال بن رباح رضي الله عنه',3,1,4,'bilal','companions'],
+['ما اسم والد النبي ﷺ؟','عبدالله بن عبدالمطلب',2,0,2,'prophet_father','seerah'],
+['ما اسم والدة النبي ﷺ؟','آمنة بنت وهب',2,0,2,'prophet_mother','seerah'],
+['ما السورة التي لا تبدأ بالبسملة؟','سورة التوبة',4,2,4,'tawbah_basmala','quran'],
+['كم عدد أجزاء القرآن الكريم؟','30 جزءًا',3,1,4,'quran_juz','quran'],
+['ما اسم العام الذي توفيت فيه خديجة رضي الله عنها وأبو طالب؟','عام الحزن',4,2,4,'year_sorrow','seerah'],
+['ما اسم الناقة التي اشتهرت في هجرة النبي ﷺ؟','القصواء',5,3,4,'qaswa','seerah'],
+['ما اسم الصحابي الذي نام في فراش النبي ﷺ ليلة الهجرة؟','علي بن أبي طالب رضي الله عنه',4,2,4,'ali_bed_hijra','seerah'],
+['من الصحابي الذي جُمع الناس على مصحف واحد في خلافته؟','عثمان بن عفان رضي الله عنه',5,3,4,'uthman_mushaf','history'],
+['ما اسم الغزوة التي وقعت في السنة الثالثة للهجرة؟','غزوة أُحد',4,2,4,'uhud_year','history'],
+['ما اسم الغزوة التي تُعرف أيضًا بغزوة الأحزاب؟','غزوة الخندق',4,2,4,'khandaq_ahzab','history']
+]);
+
+const AGE_LEVELS=[[1,2],[2,3],[3,4],[4,5],[4,5]];
+function questionFits(q,age){const range=AGE_LEVELS[age]||[1,5];return q.minAge<=age&&q.maxAge>=age&&q.level>=range[0]&&q.level<=range[1]}
 function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختار فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};updateScores();beginQuestion()}
 function showTurnIntro(){clearTimer();stopAll();document.getElementById('turnIntroTeam').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;show('turnIntro');play('transition');setTimeout(()=>{if(document.getElementById('turnIntro').classList.contains('active'))beginQuestion()},3000)}
 const HISTORY_KEY='tahadi_question_history_v2';
@@ -81,33 +269,34 @@ function saveHistory(h){try{localStorage.setItem(HISTORY_KEY,JSON.stringify(h))}
 function markPlayed(q){const h=loadHistory(),now=Date.now();const old=h[q.id]||{};h[q.id]={last:now,count:(old.count||0)+1,topic:q.topicId};saveHistory(h)}
 function getQuestion(){
   const age=st.teams[st.turn].age,h=loadHistory();
-  let eligible=Q.filter(q=>st.selected.includes(q.cat)&&q.min<=age&&!st.used.has(q.id)&&!st.usedTopics.has(q.topicId));
-  if(!eligible.length) eligible=Q.filter(q=>st.selected.includes(q.cat)&&q.min<=age&&!st.used.has(q.id));
-  if(!eligible.length) eligible=Q.filter(q=>st.selected.includes(q.cat)&&q.min<=age);
+  let eligible=Q.filter(q=>st.selected.includes(q.cat)&&questionFits(q,age)&&!st.used.has(q.id)&&!st.usedTopics.has(q.topicId));
+  if(!eligible.length) eligible=Q.filter(q=>st.selected.includes(q.cat)&&questionFits(q,age)&&!st.used.has(q.id));
+  if(!eligible.length) eligible=Q.filter(q=>st.selected.includes(q.cat)&&questionFits(q,age));
+  if(!eligible.length) eligible=Q.filter(q=>st.selected.includes(q.cat)&&q.minAge<=age&&q.maxAge>=age);
+  if(!eligible.length) throw new Error('لا توجد أسئلة مناسبة لهذه الفئة العمرية في الفئات المختارة');
   const unseen=eligible.filter(q=>!h[q.id]);
   let pool=unseen.length?unseen:eligible;
   const recentTypes=new Set(st.usedTypes.slice(-2));
   const varied=pool.filter(q=>!recentTypes.has(q.type));
-  if(varied.length) pool=varied;
-  const minCount=Math.min(...st.selected.map(cat=>st.catCounts[cat]||0));
+  if(varied.length>=2) pool=varied;
+  const counts=st.selected.map(cat=>st.catCounts[cat]||0),minCount=Math.min(...counts);
   const balanced=pool.filter(q=>(st.catCounts[q.cat]||0)<=minCount);
   if(balanced.length) pool=balanced;
+  const target=(AGE_LEVELS[age]||[1,3])[1];
+  const close=pool.filter(q=>Math.abs(q.level-target)<=1);
+  if(close.length) pool=close;
   let q;
-  if(unseen.length){
-    q=pool[Math.floor(Math.random()*pool.length)];
-  }else{
-    const oldest=Math.min(...pool.map(x=>h[x.id]?.last||0));
-    const oldestPool=pool.filter(x=>(h[x.id]?.last||0)===oldest);
-    q=oldestPool[Math.floor(Math.random()*oldestPool.length)];
-  }
+  const fresh=pool.filter(x=>!h[x.id]);
+  if(fresh.length) q=fresh[Math.floor(Math.random()*fresh.length)];
+  else{const oldest=Math.min(...pool.map(x=>h[x.id]?.last||0));const oldestPool=pool.filter(x=>(h[x.id]?.last||0)===oldest);q=oldestPool[Math.floor(Math.random()*oldestPool.length)]}
   st.used.add(q.id);st.usedTopics.add(q.topicId);st.usedTypes.push(q.type);if(st.usedTypes.length>4)st.usedTypes.shift();st.catCounts[q.cat]=(st.catCounts[q.cat]||0)+1;markPlayed(q);return q
 }
-function beginQuestion(){stopAll();st.current=getQuestion();document.getElementById('turnBadge').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;document.getElementById('catBadge').textContent=CAT.find(c=>c[0]===st.current.cat)[1];document.getElementById('question').textContent=st.current.q;document.getElementById('answerBox').textContent=st.current.a;document.getElementById('answerBox').classList.add('hidden');document.getElementById('resultBtns').classList.add('hidden');document.getElementById('revealBtn').classList.remove('hidden');show('game');startTimer()}
+function beginQuestion(){stopAll();try{st.current=getQuestion()}catch(e){toast(e.message||'لا توجد أسئلة مناسبة');backToCategories();return}document.getElementById('turnBadge').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;document.getElementById('catBadge').textContent=CAT.find(c=>c[0]===st.current.cat)[1];document.getElementById('qIndex').textContent='السؤال '+(st.qnum+1)+' من '+st.rounds;document.getElementById('difficulty').textContent='مستوى '+st.current.level+'/5';document.getElementById('progressBar').style.width=((st.qnum/st.rounds)*100)+'%';document.getElementById('ageHint').textContent='فئة '+AGES[st.teams[st.turn].age];document.getElementById('question').textContent=st.current.q;document.getElementById('answerBox').innerHTML='<div class="answerLabel">الإجابة</div>'+st.current.a;document.getElementById('answerBox').classList.add('hidden');document.getElementById('resultBtns').classList.add('hidden');document.getElementById('revealBtn').classList.remove('hidden');show('game');startTimer()}
 function startTimer(){clearTimer();st.deadline=Date.now()+15000;st.countdownStarted=false;document.getElementById('timer').textContent='15';play('thinking',true);st.timer=setInterval(tick,100);tick()}
-function tick(){let ms=st.deadline-Date.now();if(ms<=0){document.getElementById('timer').textContent='0';clearTimer();stopAll();play('timeup');reveal(true);return}let sec=Math.ceil(ms/1000);document.getElementById('timer').textContent=sec;if(sec<=9&&!st.countdownStarted){st.countdownStarted=true;A.thinking.pause();A.thinking.currentTime=0;play('countdown')}}
+function tick(){let ms=st.deadline-Date.now();if(ms<=0){document.getElementById('timer').textContent='0';clearTimer();stopAll();play('timeup');haptic('error');reveal(true);return}let sec=Math.ceil(ms/1000);document.getElementById('timer').textContent=sec;if(sec<=9&&!st.countdownStarted){st.countdownStarted=true;A.thinking.pause();A.thinking.currentTime=0;play('countdown')}}
 function clearTimer(){if(st.timer){clearInterval(st.timer);st.timer=null}}
 function reveal(fromTimeout=false){clearTimer();if(!fromTimeout)stopAll();document.getElementById('answerBox').classList.remove('hidden');document.getElementById('resultBtns').classList.remove('hidden');document.getElementById('revealBtn').classList.add('hidden')}
-function mark(ok){stopAll();if(ok){st.scores[st.turn]++;play('correct')}else play(Math.random()<.5?'wrong1':'wrong2');updateScores();setTimeout(nextTurn,700)}
+function mark(ok){stopAll();if(ok){st.scores[st.turn]++;play('correct');haptic('success')}else{play(Math.random()<.5?'wrong1':'wrong2');haptic('error')}updateScores();setTimeout(nextTurn,700)}
 function nextTurn(){st.qnum++;if(st.qnum>=st.rounds){finish();return}st.turn=1-st.turn;showTurnIntro()}
 function updateScores(){if(!st.teams.length)return;document.getElementById('s1n').textContent='🔴 '+st.teams[0].name;document.getElementById('s2n').textContent='🔵 '+st.teams[1].name;document.getElementById('s1').textContent=st.scores[0];document.getElementById('s2').textContent=st.scores[1]}
 function finish(){clearTimer();stopAll();const a=st.scores[0],b=st.scores[1];let title,details;if(a===b){title='تعادل 🤝';details=`${st.teams[0].name}: ${a} نقطة<br>${st.teams[1].name}: ${b} نقطة`;}else{const wi=a>b?0:1,li=1-wi;title=`🏆 الفائز: ${(wi===0?'🔴 ':'🔵 ')+st.teams[wi].name}`;details=`الفائز — ${(wi===0?'🔴 ':'🔵 ')+st.teams[wi].name}: ${st.scores[wi]} نقطة<br>الخاسر — ${(li===0?'🔴 ':'🔵 ')+st.teams[li].name}: ${st.scores[li]} نقطة`;}document.getElementById('winner').textContent=title;document.getElementById('finalScore').innerHTML=details;show('finish');play(Math.random()<.5?'win1':'win2')} function backToCategories(){clearTimer();stopAll();show('categories');play('transition')}
