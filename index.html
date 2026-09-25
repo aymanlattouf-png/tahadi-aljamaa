@@ -259,6 +259,46 @@ addMany('islamic',[
 ['ما اسم الغزوة التي تُعرف أيضًا بغزوة الأحزاب؟','غزوة الخندق',4,2,4,'khandaq_ahzab','history']
 ]);
 
+
+/* تغطية إضافية لضمان 15 سؤالًا غير مكرر حتى عند اختيار فئة واحدة */
+addMany('general',[
+['ما وحدة قياس التردد؟','الهرتز',4,2,4,'hertz','science'],
+['ما الكوكب الأكثر حرارة في المجموعة الشمسية؟','الزهرة',4,2,4,'hottest_planet','science'],
+['ما أصغر كوكب في المجموعة الشمسية؟','عطارد',4,2,4,'smallest_planet','science'],
+['ما أكبر غدة في جسم الإنسان؟','الكبد',4,2,4,'largest_gland','body'],
+['ما المعدن السائل في درجة حرارة الغرفة؟','الزئبق',4,2,4,'mercury_metal','science'],
+['ما اسم الطبقة الخارجية الصلبة من الأرض؟','القشرة الأرضية',4,2,4,'earth_crust','science'],
+['ما الجهاز الذي يحول الطاقة الكيميائية المخزنة إلى طاقة كهربائية؟','البطارية',5,3,4,'battery_energy','science'],
+['ما اسم العلم الذي يدرس الزلازل؟','علم الزلازل / السيزمولوجيا',5,3,4,'seismology','science']
+]);
+addMany('flags',[
+['لأي دولة يعود هذا العلم؟ 🇷🇸','صربيا',4,2,4,'flag_rs','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇷🇴','بوخارست',4,2,4,'flag_ro_capital','flag_capital'],
+['لأي دولة يعود هذا العلم؟ 🇭🇷','كرواتيا',4,2,4,'flag_hr','identify'],
+['ما عاصمة الدولة صاحبة هذا العلم؟ 🇸🇰','براتيسلافا',5,3,4,'flag_sk_capital','flag_capital']
+]);
+addMany('words',[
+['ما جمع كلمة «صحراء»؟','صحارى',4,2,4,'plural_desert','plural'],
+['ما مفرد كلمة «قضايا»؟','قضية',4,2,4,'singular_cases','singular']
+]);
+addMany('speed',[
+['اذكر 5 حيوانات مختلفة خلال 15 ثانية','أي 5 حيوانات صحيحة',2,0,1,'speed_animals5','rapid_list'],
+['اذكر 5 أشياء توجد في المدرسة','أي 5 أشياء مناسبة',2,0,1,'speed_school5','rapid_list'],
+['اذكر 5 كلمات تبدأ بحرف «س»','أي 5 كلمات صحيحة',2,0,1,'speed_s5','rapid_constraint'],
+['اذكر 5 أطعمة لا تبدأ بحرف «م»','أي 5 أطعمة صحيحة',2,0,1,'speed_food_no_m','rapid_constraint'],
+['اذكر 5 وسائل نقل','أي 5 وسائل نقل صحيحة',2,0,1,'speed_transport5','rapid_list'],
+['اذكر 5 أسماء دول تبدأ بخمسة أحرف مختلفة','أي 5 دول صحيحة',3,1,3,'speed_country_letters5','rapid_constraint'],
+['اذكر 6 أجهزة إلكترونية مختلفة','أي 6 أجهزة صحيحة',4,2,4,'speed_devices6','rapid_list'],
+['اذكر 5 مدن عالمية ليست عواصم دول','أي 5 مدن صحيحة',5,3,4,'speed_noncapital_cities','rapid_constraint']
+]);
+addMany('islamic',[
+['من الصحابي الملقب بالصديق؟','أبو بكر الصديق رضي الله عنه',3,1,4,'siddiq','companions'],
+['في أي سنة هجرية توفي النبي ﷺ؟','السنة الحادية عشرة للهجرة',4,2,4,'prophet_death_year','seerah'],
+['كم سنة تقريبًا استمرت الدعوة في مكة قبل الهجرة؟','13 سنة',4,2,4,'makkah_years','seerah'],
+['ما اسم مرضعة النبي ﷺ المشهورة؟','حليمة السعدية',4,2,4,'halima','seerah'],
+['اذكر الأشهر الحرم الأربعة','ذو القعدة، ذو الحجة، المحرم، رجب',5,3,4,'sacred_month_names','basic']
+]);
+
 const AGE_LEVELS=[[1,2],[2,3],[3,4],[4,5],[4,5]];
 function questionFits(q,age){const range=AGE_LEVELS[age]||[1,5];return q.minAge<=age&&q.maxAge>=age&&q.level>=range[0]&&q.level<=range[1]}
 function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختار فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};updateScores();beginQuestion()}
