@@ -37,6 +37,31 @@ const SOURCE_REGISTRY={
   usgs_water:{name:'USGS Water Science School',url:'https://www.usgs.gov/water-science-school/science/facts-about-water'},
   nist_water:{name:'NIST Chemistry WebBook - Water',url:'https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=204'},
   nih_skin:{name:'NIH / NIAMS skin education',url:'https://www.niams.nih.gov/health-topics/educational-resources/health-lesson-learning-about-skin'},
+  nih_heart:{name:'NIH / NHLBI - How the Heart Works',url:'https://www.nhlbi.nih.gov/health/heart'},
+  nih_heart_flow:{name:'NIH / NHLBI - Blood Flow Through the Heart',url:'https://www.nhlbi.nih.gov/health/heart/blood-flow'},
+  ncbi_liver:{name:'NCBI Bookshelf - Liver Anatomy',url:'https://www.ncbi.nlm.nih.gov/books/NBK500014/'},
+  pubmed_liver:{name:'PubMed - Clinical and surgical anatomy of the liver',url:'https://pubmed.ncbi.nlm.nih.gov/24453062/'},
+  noaa_pacific:{name:'NOAA - Pacific Ocean size',url:'https://oceanexplorer.noaa.gov/ocean-fact/pacific-size/'},
+  noaa_oceans:{name:'NOAA - Largest ocean basin',url:'https://oceanservice.noaa.gov/facts/biggestocean.html'},
+  noaa_atmosphere:{name:'NOAA - The Atmosphere',url:'https://www.noaa.gov/jetstream/atmosphere'},
+  noaa_latitude:{name:'NOAA - What is latitude?',url:'https://oceanservice.noaa.gov/facts/latitude.html'},
+  noaa_latlong:{name:'NOAA - Latitude and longitude',url:'https://oceanservice.noaa.gov/education/tutorial_nautical_charts/nautical_charts02_information_2b.html'},
+  nasa_ozone:{name:'NASA - Ozone',url:'https://science.nasa.gov/earth/earth-observatory/ozone/'},
+  nasa_ozonewatch:{name:'NASA Ozone Watch',url:'https://ozonewatch.gsfc.nasa.gov/facts/'},
+  nasa_earth:{name:'NASA - Facts About Earth',url:'https://science.nasa.gov/earth/facts/'},
+  nasa_earthsheet:{name:'NASA GSFC - Earth Fact Sheet',url:'https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html'},
+  nasa_photosyn:{name:'NASA - Photosynthesis education',url:'https://science.nasa.gov/eclips/videos/plants-in-space/'},
+  usda_photosyn:{name:'USDA ARS - What is Photosynthesis?',url:'https://aglab.ars.usda.gov/explore-learn/what-is-photosynthesis'},
+  smithsonian_cheetah:{name:'Smithsonian National Zoo - Cheetah',url:'https://nationalzoo.si.edu/animals/cheetah'},
+  smithsonian_cheetah_facts:{name:'Smithsonian - Cheetah facts',url:'https://nationalzoo.si.edu/animals/news/why-do-cheetahs-have-spots-and-other-cheetah-facts'},
+  nist_periodic:{name:'NIST Periodic Table',url:'https://www.nist.gov/pml/periodic-table-elements'},
+  iupac_periodic:{name:'IUPAC Periodic Table',url:'https://stats.iupac.org/reports/periodic_table/index.html'},
+  nist_si:{name:'NIST - SI base units',url:'https://www.nist.gov/si-redefinition/definitions-si-base-units'},
+  nist_units:{name:'NIST - SI derived units',url:'https://www.nist.gov/pml/special-publication-811/nist-guide-si-chapter-4-two-classes-si-units-and-si-prefixes'},
+  usgs_seismo:{name:'USGS - Seismology definition',url:'https://apps.usgs.gov/thesaurus/term-simple.php?code=1050&thcode=2'},
+  usgs_seismo2:{name:'USGS Thesaurus - Seismology',url:'https://apps.usgs.gov/thesaurus/thesaurus-full.php'},
+  doe_battery:{name:'US Department of Energy - Batteries',url:'https://www.energy.gov/science/doe-explainsbatteries'},
+  doe_battery_handbook:{name:'US Department of Energy - Battery Theory',url:'https://www.energy.gov/documents/doe-hdbk-1011-92vol2'},
   ncbi_hearing:{name:'NCBI Bookshelf - Hearing and ear anatomy',url:'https://www.ncbi.nlm.nih.gov/books/NBK20366/'},
   openstax_math:{name:'OpenStax Prealgebra',url:'https://openstax.org/books/prealgebra/pages/2-1-use-the-language-of-algebra'},
   khan_math:{name:'Khan Academy Arithmetic',url:'https://www.khanacademy.org/math/arithmetic-home'},
@@ -73,9 +98,9 @@ function addMany(cat,rows){rows.forEach((x,i)=>add(cat,x[0],x[1],x[2],x[3],x[4],
 addMany('general',[
 ['ما عاصمة المملكة العربية السعودية؟','الرياض',1,0,0,'ksa_capital','capital'],
 ['ما الكوكب المعروف بالكوكب الأحمر؟','المريخ',1,0,0,'mars','science'],
-['كم عدد أشهر السنة؟','12 شهرًا',1,0,0,'months','number'],
+['كم عدد الكواكب القزمة المعترف بها رسميًا في المجموعة الشمسية؟','5 كواكب قزمة',2,0,2,'dwarf_planet_count','science'],
 ['ما أكبر كوكب في المجموعة الشمسية؟','المشتري',2,0,1,'jupiter','science'],
-['ما الحيوان الملقب بسفينة الصحراء؟','الجمل',1,0,0,'camel','animal'],
+['أي كوكب يدور حوله القمر غانيميد؟','المشتري',3,1,4,'ganymede_planet','science'],
 ['ما العضو الذي يضخ الدم في جسم الإنسان؟','القلب',1,0,0,'heart','body'],
 ['عند كم درجة مئوية يتجمد الماء عادة؟','0° مئوية',2,0,1,'freezing','science'],
 ['ما أكبر محيط في العالم؟','المحيط الهادئ',2,0,1,'pacific','geography'],
@@ -106,9 +131,9 @@ addMany('general',[
 ['أي دولة أوروبية عاصمتها ليوبليانا؟','سلوفينيا',5,3,4,'slovenia_capital','capital'],
 ['ما العنصر الأكثر وفرة في الشمس؟','الهيدروجين',4,2,4,'sun_hydrogen','science'],
 ['ما اسم الخط الوهمي عند خط عرض صفر؟','خط الاستواء',3,1,3,'equator','geography'],
-['ما الجهاز الذي يقيس الضغط الجوي؟','البارومتر',4,2,4,'barometer','science'],
-['أي محيط يقع بين أفريقيا وأستراليا؟','المحيط الهندي',3,1,3,'indian_ocean','geography'],
-['ما اسم التحول المباشر من الحالة الصلبة إلى الغازية؟','التسامي',5,3,4,'sublimation','science'],
+['ما وحدة قياس الضغط في النظام الدولي؟','الباسكال',4,2,4,'pascal_pressure','science'],
+['ما ثاني أكبر محيط في العالم بعد المحيط الهادئ؟','المحيط الأطلسي',3,1,4,'atlantic_second','geography'],
+['ما الكوكب القزم الموجود في حزام الكويكبات بين المريخ والمشتري؟','سيريس',5,3,4,'ceres_belt','science'],
 ['ما العدد الأولي الزوجي الوحيد؟','2',3,1,4,'even_prime','number'],
 ['أي دولة عاصمتها بوينس آيرس؟','الأرجنتين',3,1,4,'argentina_capital','capital']
 ]);
@@ -553,6 +578,38 @@ addMany('islamic',[
 ['ما السورة التي تحمل اسم النساء؟','سورة النساء',2,0,4,'q_women_surah','quran'],
 ['أي سورة تبدأ بقول الله تعالى: «الحمد لله رب العالمين»؟','سورة الفاتحة',2,0,4,'q_fatiha_opening','quran']
 ]);
+
+
+/* ربط كل سؤال بمرجعين مناسبين لمحتواه بعد اكتمال البنك */
+function verifiedSourcesFor(q){
+  if(q.cat==='flags')return ['cia_factbook','restcountries'];
+  if(q.cat==='capitals')return ['cia_factbook','geonames'];
+  if(q.cat==='math')return ['openstax_math','khan_math'];
+  if(q.cat==='words'||q.cat==='speed')return ['arabic_academy','wiktionary_ar'];
+  if(q.cat==='islamic')return q.type==='quran'?['quran_complex','quran_com']:['islamweb_seerah','islamqa_seerah'];
+  const t=q.type,txt=q.q;
+  if(t==='capital'||t==='culture'||(t==='geography'&&/دولة|قارة تضم|السعودية|الأرجنتين|البرازيل|اليابان/.test(txt)))return ['cia_factbook','restcountries'];
+  if(/المحيط الهادئ|ثاني أكبر محيط|الأطلسي/.test(txt))return ['noaa_pacific','noaa_oceans'];
+  if(/خط عرض|خط الاستواء/.test(txt))return ['noaa_latitude','noaa_latlong'];
+  if(/بيرينغ/.test(txt))return ['cia_factbook','usgs_seismo2'];
+  if(/الفهد/.test(txt))return ['smithsonian_cheetah','smithsonian_cheetah_facts'];
+  if(/البناء الضوئي/.test(txt))return ['nasa_photosyn','usda_photosyn'];
+  if(/القلب|يضخ الدم/.test(txt))return ['nih_heart','nih_heart_flow'];
+  if(/أكبر عضو|الجلد/.test(txt))return ['nih_skin','nih_heart'];
+  if(/عظمة|الأذن|الركاب/.test(txt))return ['ncbi_hearing','nih_skin'];
+  if(/أكبر غدة|الكبد/.test(txt))return ['ncbi_liver','pubmed_liver'];
+  if(/يتجمد الماء|يغلي الماء|مذيب/.test(txt))return ['usgs_water','nist_water'];
+  if(/النيتروجين|الغلاف الجوي/.test(txt))return ['noaa_atmosphere','nasa_earth'];
+  if(/الأوزون|فوق البنفسجية/.test(txt))return ['nasa_ozone','nasa_ozonewatch'];
+  if(/رمزه الكيميائي|المعدن السائل|الزئبق|الذهب/.test(txt))return ['nist_periodic','iupac_periodic'];
+  if(/الأمبير|الهرتز|وحدة قياس الضغط|الباسكال/.test(txt))return ['nist_si','nist_units'];
+  if(/البطارية|الطاقة الكيميائية/.test(txt))return ['doe_battery','doe_battery_handbook'];
+  if(/الزلازل|السيزمولوجيا/.test(txt))return ['usgs_seismo','usgs_seismo2'];
+  if(/القشرة الأرضية/.test(txt))return ['nasa_earth','nasa_earthsheet'];
+  if(t==='number')return ['openstax_math','khan_math'];
+  return ['nasa_solar','nasa_planets'];
+}
+for(const q of Q){q.sources=verifiedSourcesFor(q);q.verified=q.sources.length===2;}
 
 const AGE_LEVELS=[[1,2],[2,3],[3,4],[4,5],[4,5]];
 function questionFits(q,age){const range=AGE_LEVELS[age]||[1,5];return q.minAge<=age&&q.maxAge>=age&&q.level>=range[0]&&q.level<=range[1]}
