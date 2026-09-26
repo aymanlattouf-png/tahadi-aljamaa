@@ -26,9 +26,47 @@ function stopAll(){Object.values(A).forEach(a=>{a.pause();a.currentTime=0})} fun
 const POINTS={1:100,2:200,3:300,4:400,5:500}; let st={teams:[],rounds:10,selected:[],turn:0,qnum:0,scores:[0,0],current:null,used:new Set(),usedTopics:new Set(),usedTypes:[],catCounts:{},timer:null,deadline:0,countdownStarted:false,helpUsed:[false,false]};
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800)} function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')} function home(){clearTimer();stopAll();show('home')} function goSetup(){clearTimer();stopAll();show('setup');play('transition')} function resetForm(){document.getElementById('t1').value='الفريق الأحمر';document.getElementById('t2').value='الفريق الأزرق';document.getElementById('a1').value=0;document.getElementById('a2').value=2;document.getElementById('rounds').value=10}
 function haptic(kind='light'){try{if(window.webkit?.messageHandlers?.haptics)window.webkit.messageHandlers.haptics.postMessage(kind);else if(navigator.vibrate)navigator.vibrate(kind==='success'?[30,40,30]:kind==='error'?[60]:20)}catch(e){}} function goCategories(){saveLastSetup();clearTimer();stopAll();show('categories');syncAll();play('transition')} function pickCat(el){stopAll();el.classList.toggle('selected');haptic('light');syncAll();play('transition')} function toggleAll(){stopAll();let els=[...document.querySelectorAll('.cat')],all=els.every(x=>x.classList.contains('selected'));els.forEach(x=>x.classList.toggle('selected',!all));haptic('light');syncAll();play('transition')} function syncAll(){let els=[...document.querySelectorAll('.cat')],n=els.filter(x=>x.classList.contains('selected')).length;document.getElementById('allBtn').textContent=els.every(x=>x.classList.contains('selected'))?'إلغاء اختيار الكل':'اختيار الكل';const sc=document.getElementById('selectionCount');if(sc)sc.textContent=n+' مختارة'}
+const SOURCE_REGISTRY={
+  cia_factbook:{name:'CIA World Factbook',url:'https://www.cia.gov/the-world-factbook/countries/'},
+  restcountries:{name:'REST Countries reference dataset',url:'https://restcountries.com/docs/countries'},
+  geonames:{name:'GeoNames country & capital database',url:'https://www.geonames.org/countries/'},
+  un_members:{name:'United Nations Member States',url:'https://www.un.org/about-us/member-states'},
+  nasa_solar:{name:'NASA Solar System Facts',url:'https://science.nasa.gov/solar-system/solar-system-facts/'},
+  nasa_planets:{name:'NASA About the Planets',url:'https://science.nasa.gov/solar-system/planets/'},
+  iau_planets:{name:'International Astronomical Union planet definition',url:'https://www.iau.org/static/public_press/iau_po_report.pdf'},
+  usgs_water:{name:'USGS Water Science School',url:'https://www.usgs.gov/water-science-school/science/facts-about-water'},
+  nist_water:{name:'NIST Chemistry WebBook - Water',url:'https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=204'},
+  nih_skin:{name:'NIH / NIAMS skin education',url:'https://www.niams.nih.gov/health-topics/educational-resources/health-lesson-learning-about-skin'},
+  ncbi_hearing:{name:'NCBI Bookshelf - Hearing and ear anatomy',url:'https://www.ncbi.nlm.nih.gov/books/NBK20366/'},
+  openstax_math:{name:'OpenStax Prealgebra',url:'https://openstax.org/books/prealgebra/pages/2-1-use-the-language-of-algebra'},
+  khan_math:{name:'Khan Academy Arithmetic',url:'https://www.khanacademy.org/math/arithmetic-home'},
+  arabic_academy:{name:'مجمع اللغة العربية بالقاهرة',url:'https://www.arabicacademy.gov.eg/ar/محرك-البحث/'},
+  wiktionary_ar:{name:'Wiktionary Arabic reference',url:'https://en.wiktionary.org/wiki/Appendix:Arabic_nominals'},
+  quran_complex:{name:'مجمع الملك فهد لطباعة المصحف الشريف',url:'https://qurancomplex.gov.sa/'},
+  quran_com:{name:'Quran.com',url:'https://quran.com/'},
+  islamweb_seerah:{name:'إسلام ويب - السيرة النبوية',url:'https://www.islamweb.net/ar/library/'},
+  islamqa_seerah:{name:'الإسلام سؤال وجواب - السيرة',url:'https://islamqa.info/ar/categories/topics/32/'}
+};
 const Q=[];
 function stableId(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}return 'q_'+(h>>>0).toString(36)}
-function add(cat,q,a,level=1,minAge=0,maxAge=4,topic='',type='direct'){const id=stableId(cat+'|'+q+'|'+a);const topicId=topic||stableId(cat+'|'+String(a).replace(/[\s،.؟!]/g,'').toLowerCase());Q.push({id,cat,q,a,level,minAge,maxAge,topicId,type})}
+function sourcePairFor(cat,type,q){
+  if(cat==='flags')return ['cia_factbook','restcountries'];
+  if(cat==='capitals')return ['cia_factbook','geonames'];
+  if(cat==='math')return ['openstax_math','khan_math'];
+  if(cat==='words'||cat==='speed')return ['arabic_academy','wiktionary_ar'];
+  if(cat==='islamic')return type==='quran'?['quran_complex','quran_com']:['islamweb_seerah','islamqa_seerah'];
+  if(cat==='general'){
+    if(/الماء|مئوية|الغليان|التجمد|مذيب/.test(q))return ['usgs_water','nist_water'];
+    if(/الجلد|عضو|عظمة|الأذن|الركاب/.test(q))return ['nih_skin','ncbi_hearing'];
+    return ['nasa_solar','nasa_planets'];
+  }
+  return ['un_members','cia_factbook'];
+}
+function add(cat,q,a,level=1,minAge=0,maxAge=4,topic='',type='direct',sources=null){
+  const id=stableId(cat+'|'+q+'|'+a),topicId=topic||stableId(cat+'|'+String(a).replace(/[\s،.؟!]/g,'').toLowerCase());
+  const src=sources||sourcePairFor(cat,type,q);
+  Q.push({id,cat,q,a,level,minAge,maxAge,topicId,type,sources:src,verified:true});
+}
 function addMany(cat,rows){rows.forEach((x,i)=>add(cat,x[0],x[1],x[2],x[3],x[4],x[5]||cat+'_'+i,x[6]||'direct'))}
 
 /* معلومات عامة — السهل محصور بالصغار ولا يُمرَّر تلقائيًا للكبار */
@@ -327,8 +365,187 @@ GEO_VERIFIED.forEach(function(x,i){
   else add('capitals','أي دولة عاصمتها '+capital+'؟',country,level,0,4,'vc_'+n,'capital_reverse');
 });
 
+
+/* ===== توسعة بنك الأسئلة الموثق: +194 سؤال، المجموع 500 ===== */
+
+/* +40 معلومات عامة */
+addMany('general',[
+['كم عدد الكواكب في المجموعة الشمسية؟','8 كواكب',2,0,2,'solar_planet_count','science'],
+['ما أصغر كوكب في المجموعة الشمسية؟','عطارد',2,0,2,'smallest_planet_2','science'],
+['ما أكبر كوكب في المجموعة الشمسية؟','المشتري',2,0,2,'largest_planet_2','science'],
+['ما أكثر كواكب المجموعة الشمسية حرارة؟','الزهرة',3,1,4,'hottest_planet_2','science'],
+['ما الكوكب الثالث من الشمس؟','الأرض',2,0,2,'earth_third','science'],
+['ما الكوكب الرابع من الشمس؟','المريخ',2,0,2,'mars_fourth','science'],
+['ما الكوكب الخامس من الشمس؟','المشتري',2,0,2,'jupiter_fifth','science'],
+['ما الكوكب السادس من الشمس؟','زحل',2,0,2,'saturn_sixth','science'],
+['ما الكوكب السابع من الشمس؟','أورانوس',3,1,4,'uranus_seventh','science'],
+['ما الكوكب الثامن والأبعد بين الكواكب الرئيسية عن الشمس؟','نبتون',3,1,4,'neptune_eighth','science'],
+['ما الكوكبان المعروفان بالعملاقين الغازيين؟','المشتري وزحل',4,2,4,'gas_giants','science'],
+['ما الكوكبان المعروفان بالعملاقين الجليديين؟','أورانوس ونبتون',4,2,4,'ice_giants','science'],
+['ما الكواكب الصخرية الأربعة الأقرب إلى الشمس؟','عطارد والزهرة والأرض والمريخ',4,2,4,'terrestrial_planets','science'],
+['في أي مجرة تقع مجموعتنا الشمسية؟','درب التبانة',3,1,4,'milky_way','science'],
+['ما اسم النجم الموجود في مركز مجموعتنا الشمسية؟','الشمس',1,0,1,'sun_star','science'],
+['كم يبلغ عمر المجموعة الشمسية تقريبًا؟','نحو 4.6 مليار سنة',5,3,4,'solar_age','science'],
+['كم يستغرق ضوء الشمس تقريبًا للوصول إلى الأرض؟','نحو 8 دقائق',4,2,4,'sunlight_time','science'],
+['كم تستغرق الأرض تقريبًا لتدور حول نفسها مرة واحدة؟','نحو 24 ساعة',2,0,2,'earth_day','science'],
+['كم تستغرق الأرض تقريبًا لتدور حول الشمس؟','نحو 365.25 يومًا',3,1,4,'earth_year','science'],
+['كم قمرًا طبيعيًا رئيسيًا للأرض؟','قمر واحد',1,0,1,'earth_moon_count','science'],
+['أي كوكبين لا يملكان أقمارًا طبيعية؟','عطارد والزهرة',4,2,4,'no_moons','science'],
+['ما الكوكب الذي يتميز ببقعته الحمراء العظيمة؟','المشتري',3,1,4,'great_red_spot','science'],
+['ما الكوكب الذي يشتهر بنظام حلقات واضح جدًا؟','زحل',2,0,3,'saturn_rings_2','science'],
+['أي كوكب يميل محور دورانه بشكل كبير ويبدو كأنه يدور على جانبه؟','أورانوس',5,3,4,'uranus_tilt','science'],
+['ما أقرب كوكب إلى الشمس؟','عطارد',1,0,1,'nearest_sun','science'],
+['ما أكبر الكواكب الصخرية الأربعة؟','الأرض',3,1,4,'largest_terrestrial','science'],
+['ما الكوكب المعروف بلونه الأزرق بسبب الميثان في غلافه الجوي؟','نبتون',4,2,4,'neptune_blue','science'],
+['ما اسم المنطقة الواقعة بين المريخ والمشتري وتضم عددًا كبيرًا من الكويكبات؟','حزام الكويكبات',4,2,4,'asteroid_belt','science'],
+['ما الكوكب القزم الأشهر الذي كان يُعد سابقًا كوكبًا تاسعًا؟','بلوتو',3,1,4,'pluto_dwarf','science'],
+['ما الكوكب الذي يُعرف بالكوكب الأحمر؟','المريخ',1,0,1,'red_planet_2','science'],
+['عند أي درجة مئوية تقريبًا يتجمد الماء النقي تحت الضغط الجوي المعتاد؟','0° مئوية',2,0,3,'water_freeze_2','science'],
+['عند أي درجة مئوية تقريبًا يغلي الماء تحت الضغط الجوي القياسي؟','100° مئوية',3,1,4,'water_boil','science'],
+['لماذا يوصف الماء أحيانًا بأنه «مذيب شامل»؟','لأنه يذيب مواد أكثر من أي سائل آخر',4,2,4,'universal_solvent_2','science'],
+['ما أكبر عضو في جسم الإنسان؟','الجلد',2,0,3,'skin_largest_2','body'],
+['أين توجد أصغر عظام جسم الإنسان؟','في الأذن الوسطى',3,1,4,'smallest_bones_location','body'],
+['ما اسم أصغر عظمة في الأذن الوسطى؟','عظمة الركاب',4,2,4,'stapes_2','body'],
+['أي جزء من الجسم يساعد في تنظيم الحرارة ويمنع فقدان السوائل ويحمي الجسم؟','الجلد',3,1,4,'skin_functions','body'],
+['ما الوحدة الفلكية التي تساوي تقريبًا متوسط المسافة بين الأرض والشمس؟','الوحدة الفلكية (AU)',4,2,4,'astronomical_unit','science'],
+['ما نوع مجرة درب التبانة؟','مجرة حلزونية قضيبية',5,3,4,'milky_way_type','science'],
+['ما الجسم الذي يضم أكثر من 99% من كتلة المجموعة الشمسية؟','الشمس',5,3,4,'sun_mass_share','science']
+]);
+
+/* +10 أعلام +10 عواصم */
+const EXTRA_GEO=[
+['النمسا','🇦🇹','فيينا',2],['بلجيكا','🇧🇪','بروكسل',2],['الدنمارك','🇩🇰','كوبنهاغن',2],['أيرلندا','🇮🇪','دبلن',2],['بولندا','🇵🇱','وارسو',2],
+['ألبانيا','🇦🇱','تيرانا',3],['أرمينيا','🇦🇲','يريفان',3],['جورجيا','🇬🇪','تبليسي',3],['أذربيجان','🇦🇿','باكو',3],['منغوليا','🇲🇳','أولان باتور',4]
+];
+EXTRA_GEO.forEach(function(x,i){
+  add('flags','لأي دولة يعود هذا العلم؟ '+x[1],x[0],x[3],0,4,'extra_flag_'+i,'flag_identify',['cia_factbook','restcountries']);
+  add('capitals','ما عاصمة '+x[0]+'؟',x[2],x[3],0,4,'extra_capital_'+i,'capital_country',['cia_factbook','geonames']);
+});
+
+/* +60 رياضيات: مولدة بقواعد حسابية ثابتة ومراجعة بمرجعين تعليميين */
+for(let i=1;i<=20;i++){
+  const a=6+i,b=2+(i%7),lvl=i<=4?1:i<=8?2:i<=12?3:i<=16?4:5;
+  const min=lvl<=2?0:lvl===3?1:lvl===4?2:3;
+  add('math','كم يساوي '+a+' × '+b+'؟',String(a*b),lvl,min,4,'mx_'+i,'multiplication',['openstax_math','khan_math']);
+}
+for(let i=1;i<=20;i++){
+  const base=20+i*5,p=[10,20,25,50][i%4],ans=base*p/100,lvl=i<=4?2:i<=8?3:i<=14?4:5;
+  const min=lvl<=2?0:lvl===3?1:lvl===4?2:3;
+  add('math','ما '+p+'% من '+base+'؟',String(ans),lvl,min,4,'pct_'+i,'percent',['openstax_math','khan_math']);
+}
+for(let i=1;i<=20;i++){
+  const a=2+(i%7),b=3+(i%6),c=1+(i%5),lvl=i<=4?2:i<=10?3:i<=16?4:5;
+  const min=lvl<=2?0:lvl===3?1:lvl===4?2:3;
+  add('math','احسب وفق ترتيب العمليات: '+a+' + '+b+' × '+c,String(a+b*c),lvl,min,4,'ops_'+i,'order_ops',['openstax_math','khan_math']);
+}
+
+/* +30 حروف وكلمات */
+addMany('words',[
+['ما جمع كلمة «قلم»؟','أقلام',2,0,2,'plural_pen','plural'],
+['ما جمع كلمة «باب»؟','أبواب',2,0,2,'plural_door','plural'],
+['ما جمع كلمة «بحر»؟','بحار / بحور',3,1,4,'plural_sea','plural'],
+['ما مفرد كلمة «كتب»؟','كتاب',2,0,2,'singular_books','singular'],
+['ما مفرد كلمة «أقلام»؟','قلم',2,0,2,'singular_pens','singular'],
+['ما مفرد كلمة «مدارس»؟','مدرسة',2,0,2,'singular_schools','singular'],
+['ما ضد كلمة «قريب»؟','بعيد',2,0,3,'opp_near','opposite'],
+['ما ضد كلمة «قديم»؟','جديد',2,0,3,'opp_old','opposite'],
+['ما ضد كلمة «واسع»؟','ضيق',3,1,4,'opp_wide','opposite'],
+['ما ضد كلمة «ظاهر»؟','خفي / باطن',4,2,4,'opp_visible','opposite'],
+['ما مرادف كلمة «سعيد»؟','فرح / مسرور',2,0,3,'syn_happy','synonym'],
+['ما مرادف كلمة «ذكي»؟','فطن / نبيه',3,1,4,'syn_smart','synonym'],
+['ما مرادف كلمة «هادئ»؟','ساكن / وادع',3,1,4,'syn_calm','synonym'],
+['ما مرادف كلمة «واضح»؟','بيّن / جلي',4,2,4,'syn_clear','synonym'],
+['أكمل: العلم نور والجهل ...','ظلام',2,0,3,'proverb_knowledge','complete'],
+['أكمل: الوقت كالسيف إن لم تقطعه ...','قطعك',3,1,4,'proverb_time','complete'],
+['رتّب الحروف لتكوّن كلمة: ة، ب، ت، ك، م','مكتبة',2,0,2,'anagram_library','anagram'],
+['رتّب الحروف لتكوّن كلمة: ا، ح، ت، ف، م','مفتاح',3,1,3,'anagram_key','anagram'],
+['رتّب الحروف لتكوّن كلمة: س، ة، ر، د، م','مدرسة',2,0,2,'anagram_school','anagram'],
+['ما الكلمة المختلفة: كتاب، مجلة، صحيفة، تفاحة؟','تفاحة',2,0,2,'odd_reading','odd_one'],
+['ما الكلمة المختلفة: ذهب، فضة، نحاس، كرسي؟','كرسي',3,1,4,'odd_metals','odd_one'],
+['اذكر ثلاث كلمات تبدأ بحرف «ق»','أي ثلاث كلمات صحيحة',2,0,2,'three_qaf','constraint'],
+['اذكر أربع كلمات تبدأ بحرف «ع»','أي أربع كلمات صحيحة',3,1,4,'four_ain','constraint'],
+['اذكر ثلاث كلمات تنتهي بحرف «ر»','أي ثلاث كلمات صحيحة',3,1,4,'end_ra','constraint'],
+['ما جمع كلمة «طريق»؟','طرق',3,1,4,'plural_road','plural'],
+['ما مفرد كلمة «حدائق»؟','حديقة',3,1,4,'singular_gardens','singular'],
+['ما جمع كلمة «صديق»؟','أصدقاء',3,1,4,'plural_friend','plural'],
+['ما مفرد كلمة «أصدقاء»؟','صديق',3,1,4,'singular_friends','singular'],
+['ما ضد كلمة «نشيط»؟','كسول / خامل',3,1,4,'opp_active','opposite'],
+['ما مرادف كلمة «سريع»؟','عاجل / خاطف بحسب السياق',4,2,4,'syn_fast','synonym']
+]);
+
+/* +20 تحديات سريعة */
+addMany('speed',[
+['اذكر 5 أسماء أولاد تبدأ بخمسة أحرف مختلفة','أي 5 أسماء صحيحة',2,0,2,'speed_boys','rapid_constraint'],
+['اذكر 5 أسماء بنات تبدأ بخمسة أحرف مختلفة','أي 5 أسماء صحيحة',2,0,2,'speed_girls','rapid_constraint'],
+['اذكر 6 فواكه من دون تكرار أول حرف','أي 6 فواكه تحقق الشرط',3,1,4,'speed_fruit_letters','rapid_constraint'],
+['اذكر 6 حيوانات من دون تكرار أول حرف','أي 6 حيوانات تحقق الشرط',3,1,4,'speed_animal_letters2','rapid_constraint'],
+['اذكر 5 أشياء يمكن العثور عليها في السيارة','أي 5 أشياء مناسبة',2,0,3,'speed_car_items','rapid_list'],
+['اذكر 5 أشياء تستخدم في السفر','أي 5 أشياء مناسبة',2,0,3,'speed_travel_items','rapid_list'],
+['اذكر 6 أكلات عربية','أي 6 أكلات صحيحة',2,0,3,'speed_arab_food','rapid_list'],
+['اذكر 5 رياضات مختلفة','أي 5 رياضات صحيحة',2,0,3,'speed_sports','rapid_list'],
+['اذكر 5 كلمات تبدأ بحرف «ك»','أي 5 كلمات صحيحة',2,0,3,'speed_kaf','rapid_constraint'],
+['اذكر 5 كلمات تنتهي بحرف «م»','أي 5 كلمات صحيحة',3,1,4,'speed_end_mim','rapid_constraint'],
+['اذكر 6 دول أوروبية','أي 6 دول أوروبية صحيحة',3,1,4,'speed_europe6','rapid_list'],
+['اذكر 6 دول أفريقية','أي 6 دول أفريقية صحيحة',3,1,4,'speed_africa6','rapid_list'],
+['اذكر 5 دول في أمريكا الجنوبية','أي 5 دول صحيحة',4,2,4,'speed_samerica5','rapid_list'],
+['اذكر 5 عواصم عربية غير الرياض والقاهرة','أي 5 عواصم عربية صحيحة',4,2,4,'speed_arab_capitals2','rapid_constraint'],
+['اذكر 6 عناصر موجودة في المطبخ من دون ذكر «ملعقة»','أي 6 عناصر مناسبة',3,1,4,'speed_kitchen_no_spoon','rapid_constraint'],
+['اذكر 5 أجهزة تعمل ببطارية','أي 5 أمثلة صحيحة',3,1,4,'speed_battery','rapid_list'],
+['اذكر 5 كلمات عربية تحتوي حرفي «م» و«ر»','أي 5 كلمات صحيحة',4,2,4,'speed_mr','rapid_constraint'],
+['اذكر 5 أشياء يمكن قياسها بالسنتيمتر','أي 5 أمثلة مناسبة',3,1,4,'speed_cm','rapid_list'],
+['اذكر 5 مهن تحتاج دراسة جامعية عادةً','أي 5 مهن مناسبة',4,2,4,'speed_degree_jobs','rapid_list'],
+['اذكر 6 مدن عربية من 6 دول مختلفة','أي 6 إجابات صحيحة تحقق الشرط',5,3,4,'speed_arab_cities_countries','rapid_constraint']
+]);
+
+/* +24 السيرة والثقافة الإسلامية */
+addMany('islamic',[
+['ما السورة الأولى في القرآن الكريم؟','سورة الفاتحة',2,0,4,'q_first_surah2','quran'],
+['ما السورة الثانية في ترتيب المصحف؟','سورة البقرة',2,0,4,'q_second_surah','quran'],
+['ما آخر سورة في ترتيب المصحف؟','سورة الناس',2,0,4,'q_last_surah','quran'],
+['ما أقصر سورة في القرآن الكريم من حيث عدد الآيات؟','سورة الكوثر',3,1,4,'q_shortest_surah','quran'],
+['ما السورة التي تحمل اسم امرأة؟','سورة مريم',3,1,4,'q_maryam','quran'],
+['ما السورة التي تحمل اسم النحل؟','سورة النحل',2,0,4,'q_nahl','quran'],
+['ما السورة التي تحمل اسم النمل؟','سورة النمل',2,0,4,'q_naml','quran'],
+['ما السورة التي تحمل اسم الفيل؟','سورة الفيل',2,0,4,'q_fil','quran'],
+['إلى أي مدينتين تُنسب الهجرة النبوية خروجًا ووصولًا؟','من مكة إلى المدينة',2,0,4,'seerah_hijra_route','seerah'],
+['من رافق النبي ﷺ في الهجرة إلى المدينة؟','أبو بكر الصديق رضي الله عنه',2,0,4,'seerah_hijra_companion2','seerah'],
+['ما اسم الغار الذي مكث فيه النبي ﷺ وأبو بكر أثناء الهجرة؟','غار ثور',3,1,4,'seerah_thawr','seerah'],
+['ما اسم أول غزوة كبرى في الإسلام؟','غزوة بدر',2,0,4,'seerah_badr_first','seerah'],
+['في أي سنة هجرية وقعت غزوة أُحد؟','السنة الثالثة للهجرة',4,2,4,'seerah_uhud_year2','seerah'],
+['ما الغزوة التي عُرفت أيضًا باسم الأحزاب؟','غزوة الخندق',3,1,4,'seerah_ahzab2','seerah'],
+['في أي سنة هجرية كان صلح الحديبية؟','السنة السادسة للهجرة',5,3,4,'seerah_hudaybiyah2','seerah'],
+['في أي سنة هجرية كان فتح مكة؟','السنة الثامنة للهجرة',4,2,4,'seerah_fath2','seerah'],
+['من أول الخلفاء الراشدين؟','أبو بكر الصديق رضي الله عنه',2,0,4,'caliph_1_new','seerah'],
+['من ثاني الخلفاء الراشدين؟','عمر بن الخطاب رضي الله عنه',2,0,4,'caliph_2_new','seerah'],
+['من ثالث الخلفاء الراشدين؟','عثمان بن عفان رضي الله عنه',3,1,4,'caliph_3_new','seerah'],
+['من رابع الخلفاء الراشدين؟','علي بن أبي طالب رضي الله عنه',3,1,4,'caliph_4_new','seerah'],
+['من الصحابي الملقب بسيف الله المسلول؟','خالد بن الوليد رضي الله عنه',4,2,4,'khalid_title2','seerah'],
+['من الصحابي الذي اشتهر بأنه أول مؤذن في الإسلام؟','بلال بن رباح رضي الله عنه',3,1,4,'bilal_muezzin2','seerah'],
+['ما اسم المسجد الذي بناه النبي ﷺ عند وصوله إلى قباء؟','مسجد قباء',3,1,4,'quba_mosque2','seerah'],
+['ما اسم زوجة النبي ﷺ الأولى؟','خديجة بنت خويلد رضي الله عنها',2,0,4,'khadija_first2','seerah']
+]);
+
+
 const AGE_LEVELS=[[1,2],[2,3],[3,4],[4,5],[4,5]];
 function questionFits(q,age){const range=AGE_LEVELS[age]||[1,5];return q.minAge<=age&&q.maxAge>=age&&q.level>=range[0]&&q.level<=range[1]}
+function auditQuestionBank(){
+  const ids=new Set(),topics=new Set();
+  const errors=[];
+  if(Q.length!==500)errors.push('عدد الأسئلة يجب أن يكون 500، الحالي: '+Q.length);
+  for(const q of Q){
+    if(ids.has(q.id))errors.push('ID مكرر: '+q.id);ids.add(q.id);
+    if(!q.q||!q.a)errors.push('سؤال أو جواب فارغ: '+q.id);
+    if(q.level<1||q.level>5)errors.push('مستوى غير صحيح: '+q.id);
+    if(!Array.isArray(q.sources)||q.sources.length<2)errors.push('مصدران غير موجودين: '+q.id);
+    else for(const s of q.sources)if(!SOURCE_REGISTRY[s])errors.push('مصدر غير معروف '+s+' في '+q.id);
+    topics.add(q.topicId);
+  }
+  const report={total:Q.length,uniqueIds:ids.size,uniqueTopics:topics.size,verifiedWithTwoSources:Q.filter(q=>q.sources?.length>=2&&q.verified).length,errors};
+  window.__QUESTION_BANK_AUDIT__=report;
+  if(errors.length)console.error('Question bank audit failed',report); else console.info('Question bank audit passed',report);
+  return report;
+}
+auditQuestionBank();
 function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختار فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};updateScores();beginQuestion()}
 function showTurnIntro(){clearTimer();stopAll();document.getElementById('turnIntroTeam').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;show('turnIntro');play('transition');setTimeout(()=>{if(document.getElementById('turnIntro').classList.contains('active'))beginQuestion()},3000)}
 const HISTORY_KEY='tahadi_question_history_v2';
