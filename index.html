@@ -208,9 +208,9 @@ addMany('math',[
 ]);
 
 addMany('words',[
-['كوّن كلمة من الحروف: ق، ل، م','قلم',1,0,0,'form_qalam','anagram'],
-['كوّن كلمة من الحروف: ب، ا، ب','باب',1,0,0,'form_bab','anagram'],
-['رتّب الحروف لتكوّن كلمة: ت، ي، ب','بيت',1,0,0,'form_bayt','anagram'],
+['رتّب الحروف لتكوّن كلمة','قلم',1,0,0,'form_qalam','anagram'],
+['رتّب الحروف لتكوّن كلمة','باب',1,0,0,'form_bab','anagram'],
+['رتّب الحروف لتكوّن كلمة','بيت',1,0,0,'form_bayt','anagram'],
 ['ما الحرف الناقص: مـ _ ـرسة؟','د — مدرسة',1,0,0,'school_missing','missing'],
 ['ما الحرف الناقص: سـ _ ـارة؟','ي — سيارة',1,0,0,'car_missing','missing'],
 ['شيء نقرأه، يتكوّن اسمه من 4 أحرف، ويبدأ بـ«ك» وينتهي بـ«ب». ما هو؟','كتاب',2,0,1,'riddle_book','word_riddle'],
@@ -219,11 +219,11 @@ addMany('words',[
 ['اذكر ثلاث كلمات تبدأ بحرف «م» خلال 15 ثانية','أي ثلاث كلمات صحيحة',2,0,1,'three_m','constraint'],
 ['ما جمع كلمة «كتاب»؟','كتب',2,0,1,'plural_book','plural'],
 ['ما ضد كلمة «سريع»؟','بطيء',1,0,0,'opposite_fast','opposite'],
-['رتّب الحروف: س، ف، ي، ن، ة','سفينة',2,0,1,'ship_anagram','anagram'],
+['رتّب الحروف لتكوّن كلمة','سفينة',2,0,1,'ship_anagram','anagram'],
 ['ما الكلمة المختلفة: دقيقة، ساعة، يوم، موز؟','موز',2,0,0,'odd_time','odd_one'],
 ['اذكر دولة ومدينة كلتاهما تبدأان بحرف «م»','مثل: مصر، مكة',2,0,1,'country_city_m','constraint'],
 ['ما مفرد كلمة «أشجار»؟','شجرة',2,0,1,'singular_trees','singular'],
-['رتّب الحروف لتكوّن كلمة: ب، ر، م، ج، ة','برمجة',3,1,2,'programming_anagram','anagram'],
+['رتّب الحروف لتكوّن كلمة','برمجة',3,1,2,'programming_anagram','anagram'],
 ['ما جمع كلمة «مفتاح»؟','مفاتيح',3,1,3,'plural_key','plural'],
 ['ما مفرد كلمة «مصابيح»؟','مصباح',3,1,3,'singular_lamps','singular'],
 ['ما مرادف كلمة «شجاع»؟','جريء أو جسور',3,1,3,'syn_brave','synonym'],
@@ -483,9 +483,9 @@ addMany('words',[
 ['ما مرادف كلمة «واضح»؟','بيّن أو جلي',4,2,4,'syn_clear','synonym'],
 ['أكمل: «العلم نور والجهل …»','ظلام',2,0,3,'proverb_knowledge','complete'],
 ['أكمل: «الوقت كالسيف إن لم تقطعه …»','قطعك',3,1,4,'proverb_time','complete'],
-['رتّب الحروف لتكوّن كلمة: ة، ب، ت، ك، م','مكتبة',2,0,2,'anagram_library','anagram'],
-['رتّب الحروف لتكوّن كلمة: ا، ح، ت، ف، م','مفتاح',3,1,3,'anagram_key','anagram'],
-['رتّب الحروف لتكوّن كلمة: س، ة، ر، د، م','مدرسة',2,0,2,'anagram_school','anagram'],
+['رتّب الحروف لتكوّن كلمة','مكتبة',2,0,2,'anagram_library','anagram'],
+['رتّب الحروف لتكوّن كلمة','مفتاح',3,1,3,'anagram_key','anagram'],
+['رتّب الحروف لتكوّن كلمة','مدرسة',2,0,2,'anagram_school','anagram'],
 ['ما الكلمة المختلفة: كتاب، مجلة، صحيفة، تفاحة؟','تفاحة',2,0,2,'odd_reading','odd_one'],
 ['ما الكلمة المختلفة: ذهب، فضة، نحاس، كرسي؟','كرسي',3,1,4,'odd_metals','odd_one'],
 ['اذكر ثلاث كلمات تبدأ بحرف «ق»','أي ثلاث كلمات صحيحة',2,0,2,'three_qaf','constraint'],
@@ -719,6 +719,23 @@ function getQuestion(){
   else{const oldest=Math.min(...pool.map(x=>h[x.id]?.last||0));const oldestPool=pool.filter(x=>(h[x.id]?.last||0)===oldest);q=oldestPool[Math.floor(Math.random()*oldestPool.length)]}
   st.used.add(q.id);st.usedTopics.add(q.topicId);st.usedTypes.push(q.type);if(st.usedTypes.length>4)st.usedTypes.shift();st.catCounts[q.cat]=(st.catCounts[q.cat]||0)+1;markPlayed(q);return q
 }
+function scrambleArabicWord(word){
+  const letters=Array.from(String(word).replace(/[^\u0621-\u064A]/g,''));
+  const original=letters.join('');
+  if(letters.length<2)return letters;
+  for(let tries=0;tries<20;tries++){
+    const out=[...letters];
+    for(let i=out.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [out[i],out[j]]=[out[j],out[i]];
+    }
+    if(out.join('')!==original)return out;
+  }
+  const out=[...letters];
+  const firstDifferent=out.findIndex((x,i)=>i>0&&x!==out[0]);
+  if(firstDifferent>0)[out[0],out[firstDifferent]]=[out[firstDifferent],out[0]];
+  return out;
+}
 function renderQuestionContent(q){
   const flagStage=document.getElementById('flagStage');
   const questionEl=document.getElementById('question');
@@ -728,6 +745,11 @@ function renderQuestionContent(q){
     flagStage.textContent=flag;
     flagStage.classList.toggle('hidden',!flag);
     questionEl.textContent=String(q.q).replace(flag,'').replace(/\s+/g,' ').trim();
+  }else if(q.type==='anagram'){
+    flagStage.textContent='';
+    flagStage.classList.add('hidden');
+    const mixed=scrambleArabicWord(q.a);
+    questionEl.textContent='رتّب الحروف لتكوّن كلمة: '+mixed.join('، ');
   }else{
     flagStage.textContent='';
     flagStage.classList.add('hidden');
