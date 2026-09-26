@@ -587,7 +587,7 @@ function verifiedSourcesFor(q){
   if(q.cat==='math')return ['openstax_math','khan_math'];
   if(q.cat==='words'||q.cat==='speed')return ['arabic_academy','wiktionary_ar'];
   if(q.cat==='islamic')return q.type==='quran'?['quran_complex','quran_com']:['islamweb_seerah','islamqa_seerah'];
-  const t=q.type,txt=q.q;
+  const t=q.type,txt=q.q+' '+q.a;
   if(t==='capital'||t==='culture'||(t==='geography'&&/دولة|قارة تضم|السعودية|الأرجنتين|البرازيل|اليابان/.test(txt)))return ['cia_factbook','restcountries'];
   if(/المحيط الهادئ|ثاني أكبر محيط|الأطلسي/.test(txt))return ['noaa_pacific','noaa_oceans'];
   if(/خط عرض|خط الاستواء/.test(txt))return ['noaa_latitude','noaa_latlong'];
