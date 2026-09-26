@@ -4,12 +4,14 @@
 
 .progressWrap{height:7px;background:#ffffff16;border-radius:999px;overflow:hidden;margin:10px 0 16px}.progressBar{height:100%;width:0;background:linear-gradient(90deg,#f59e0b,#fbbf24);transition:width .25s ease}.eyebrow{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff18;color:#fde68a;font-weight:800;font-size:13px}.hero{padding-top:44px}.heroMark{width:84px;height:84px;margin:0 auto 18px;border-radius:26px;display:grid;place-items:center;font-size:40px;background:linear-gradient(145deg,#fbbf24,#f59e0b);box-shadow:0 18px 50px #f59e0b35;color:#111827}.setupTitle{margin:0 0 4px;font-size:27px}.setupSub{margin:0 0 18px;color:var(--muted);line-height:1.7}.teamCard{padding:15px;border-radius:20px;background:#ffffff0c;border:1px solid #ffffff17}.teamCard.red{box-shadow:inset 4px 0 #ef4444}.teamCard.blue{box-shadow:inset 4px 0 #3b82f6}.teamTag{font-size:13px;font-weight:900;margin-bottom:10px}.teamCard.red .teamTag{color:#fca5a5}.teamCard.blue .teamTag{color:#93c5fd}.field small{display:block;color:var(--muted);font-size:12px;margin-top:6px}.stepper{display:flex;gap:8px;justify-content:center;margin:4px 0 18px}.stepDot{width:8px;height:8px;border-radius:999px;background:#ffffff28}.stepDot.active{width:24px;background:var(--accent)}.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:10px 0 14px}.sectionHead h2{margin:0}.selectionCount{font-size:13px;color:#fde68a;font-weight:800}.gameMeta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}.qIndex{font-size:13px;color:var(--muted);font-weight:800}.difficulty{font-size:12px;color:#fde68a;font-weight:900}.turnPill{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:900;color:#e2e8f0;margin-top:4px}.questionCard{background:linear-gradient(180deg,#ffffff10,#ffffff08);border:1px solid #ffffff18;border-radius:24px;padding:8px 14px 16px;box-shadow:0 16px 40px #0003}.answerLabel{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:5px}.finishCard{padding:28px 20px}.finishIcon{font-size:52px}.micro{font-size:12px;color:var(--muted);line-height:1.6}.btn:focus-visible,.cat:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}@media(max-width:520px){.row.setupTeams{grid-template-columns:1fr}.hero{padding-top:34px}.hero h1{font-size:39px}.question{min-height:110px}.timer{font-size:58px}.panel{border-radius:22px}}
 .pointsBadge{display:inline-flex;align-items:center;gap:6px;background:#f59e0b1f;border:1px solid #f59e0b55;color:#fde68a;border-radius:999px;padding:7px 10px;font-weight:1000;font-size:13px}.lifelineRow{display:flex;align-items:center;gap:8px;margin:10px 0}.helpBtn{flex:1;background:#38bdf822!important;color:#e0f2fe!important;border:1px solid #38bdf866!important}.helpBtn:disabled{opacity:.45;cursor:not-allowed}.helpStatus{font-size:12px;color:var(--muted);white-space:nowrap}.choices{display:grid;gap:9px;margin:10px 0 14px}.choice{width:100%;border:1px solid #ffffff2b;background:#ffffff10;color:#fff;border-radius:15px;padding:13px 14px;text-align:right;font-size:17px;font-weight:800}.choice.correctHint{border-color:#38bdf880}.choice:active{transform:scale(.99)}
+.flagStage{display:flex;align-items:center;justify-content:center;min-height:150px;margin:8px 0 6px;border-radius:22px;background:#ffffff08;border:1px solid #ffffff12;font-size:108px;line-height:1}.flagStage.hidden{display:none!important}@media(max-width:430px){.flagStage{min-height:135px;font-size:96px}}
+.choice.selectedCorrect{background:#22c55e33;border-color:#22c55e;color:#dcfce7}.choice.selectedWrong{background:#ef444433;border-color:#ef4444;color:#fee2e2}.choice.revealCorrect{border-color:#22c55e;background:#22c55e22}.choice:disabled{opacity:1;cursor:default}
 </style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><button id="soundBtn" class="sound" aria-label="تشغيل أو إيقاف الصوت">🔊</button></div>
 <section id="home" class="screen active"><div class="hero"><div class="heroMark">🔥</div><span class="eyebrow">لعبة جماعية عربية</span><h1>تحدّي الجَمعة</h1><p>أسئلة على قدّ أعماركم، منافسة سريعة، وضحك أكثر.</p></div><button class="btn" onclick="goSetup()">ابدأ التحدّي</button><p class="micro center">فريقان • 15 ثانية لكل سؤال • بدون تسجيل</p></section>
 <section id="setup" class="screen"><div class="stepper"><span class="stepDot active"></span><span class="stepDot"></span></div><div class="panel"><h2 class="setupTitle">جهّز الفريقين</h2><p class="setupSub">اختار فئة عمر كل فريق حتى تكون الأسئلة مناسبة فعلًا لمستواهم.</p><div class="row setupTeams"><div class="teamCard red"><div class="teamTag">🔴 الفريق الأحمر</div><div class="field"><label for="t1">اسم الفريق</label><input id="t1" value="الفريق الأحمر" autocomplete="off"></div><div class="field"><label for="a1">الفئة العمرية</label><select id="a1"></select><small>الأسئلة تُفلتر حسب هذا العمر، وليست نفس الأسئلة للجميع.</small></div></div><div class="teamCard blue"><div class="teamTag">🔵 الفريق الأزرق</div><div class="field"><label for="t2">اسم الفريق</label><input id="t2" value="الفريق الأزرق" autocomplete="off"></div><div class="field"><label for="a2">الفئة العمرية</label><select id="a2"></select><small>يمكن اختيار عمر مختلف لكل فريق.</small></div></div></div><div class="field"><label for="rounds">عدد الأسئلة في التحدّي</label><small>العدد زوجي دائمًا حتى يحصل الفريقان على نفس عدد الأسئلة.</small><select id="rounds"><option>6</option><option selected>10</option><option>14</option></select></div><button class="btn" onclick="goCategories()">اختيار الفئات</button></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="resetForm()">↻ إعادة الإعداد</button></div></section>
 <section id="categories" class="screen"><div class="stepper"><span class="stepDot"></span><span class="stepDot active"></span></div><div class="sectionHead"><div><h2>اختار الفئات</h2><div class="small">اختر فئة أو أكثر. المحرك يوازن بينها تلقائيًا.</div></div><div id="selectionCount" class="selectionCount">0 مختارة</div></div><div id="cats" class="cats"></div><button id="allBtn" class="btn secondary" onclick="toggleAll()">اختيار الكل</button><button class="btn" onclick="startChallenge()">ابدأ التحدّي 🔥</button><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="show('setup')">رجوع</button></div></section>
 <section id="turnIntro" class="screen"><div class="panel center" style="margin-top:22vh;padding:38px 18px"><div style="font-size:18px;color:var(--muted);font-weight:800">الدور الآن لـ</div><div id="turnIntroTeam" class="readyTeam"></div></div></section>
-<section id="game" class="screen"><div class="gameMeta"><span id="qIndex" class="qIndex"></span><span id="difficulty" class="difficulty"></span></div><div class="progressWrap"><div id="progressBar" class="progressBar"></div></div><div class="questionCard"><div class="qhead"><span id="turnBadge" class="badge"></span><span id="catBadge" class="badge"></span></div><div class="turnPill" id="ageHint"></div><div id="timer" class="timer">15</div><div id="question" class="question"></div></div><div class="lifelineRow"><button id="helpBtn" class="btn helpBtn" onclick="useLifeline()">🛟 مساعدة: 3 خيارات</button><span id="helpStatus" class="helpStatus"></span></div><div id="choices" class="choices hidden"></div><button id="revealBtn" class="btn" onclick="reveal()">إظهار الإجابة</button><div id="answerBox" class="answer hidden"></div><div id="resultBtns" class="resultBtns hidden"><button class="btn correct" onclick="mark(true)">✓ صحيحة</button><button class="btn wrong" onclick="mark(false)">✕ خاطئة</button></div><div class="scoreline"><div class="score team1"><span id="s1n"></span><b id="s1">0</b></div><div class="score team2"><span id="s2n"></span><b id="s2">0</b></div></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="restartSame()">🔄 تحدّي جديد</button></div></section>
+<section id="game" class="screen"><div class="gameMeta"><span id="qIndex" class="qIndex"></span><span id="difficulty" class="difficulty"></span></div><div class="progressWrap"><div id="progressBar" class="progressBar"></div></div><div class="questionCard"><div class="qhead"><span id="turnBadge" class="badge"></span><span id="catBadge" class="badge"></span></div><div class="turnPill" id="ageHint"></div><div id="timer" class="timer">15</div><div id="flagStage" class="flagStage hidden"></div><div id="question" class="question"></div></div><div class="lifelineRow"><button id="helpBtn" class="btn helpBtn" onclick="useLifeline()">🛟 مساعدة: 3 خيارات</button><span id="helpStatus" class="helpStatus"></span></div><div id="choices" class="choices hidden"></div><button id="revealBtn" class="btn" onclick="reveal()">إظهار الإجابة</button><div id="answerBox" class="answer hidden"></div><div id="resultBtns" class="resultBtns hidden"><button class="btn correct" onclick="mark(true)">✓ صحيحة</button><button class="btn wrong" onclick="mark(false)">✕ خاطئة</button></div><div class="scoreline"><div class="score team1"><span id="s1n"></span><b id="s1">0</b></div><div class="score team2"><span id="s2n"></span><b id="s2">0</b></div></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="restartSame()">🔄 تحدّي جديد</button></div></section>
 <section id="finish" class="screen"><div class="panel center finishCard"><div class="finishIcon">🏆</div><h2>انتهى التحدّي</h2><div id="winner" class="winner"></div><div id="finalScore" style="font-size:22px;line-height:2;margin:16px 0"></div><button class="btn" onclick="restartSame()">🎮 تحدّي جديد بنفس الإعداد</button><button class="btn secondary" onclick="backToCategories()">تغيير الفئات</button></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="show('setup')">تغيير الفرق</button></div></section>
 </div><div id="toast" class="toast" role="status" aria-live="polite"></div><script>
 const AGES=['7–10','11–15','15–17','18–25','25 وفوق']; const CAT=[['general','معلومات عامة','🧠'],['flags','أعلام','🏳️'],['capitals','عواصم','🏛️'],['math','رياضيات وذكاء','🧩'],['words','حروف وكلمات','🔤'],['speed','تحديات سريعة','⚡'],['islamic','السيرة والثقافة الإسلامية','🕌']];
@@ -357,6 +359,21 @@ function getQuestion(){
   else{const oldest=Math.min(...pool.map(x=>h[x.id]?.last||0));const oldestPool=pool.filter(x=>(h[x.id]?.last||0)===oldest);q=oldestPool[Math.floor(Math.random()*oldestPool.length)]}
   st.used.add(q.id);st.usedTopics.add(q.topicId);st.usedTypes.push(q.type);if(st.usedTypes.length>4)st.usedTypes.shift();st.catCounts[q.cat]=(st.catCounts[q.cat]||0)+1;markPlayed(q);return q
 }
+function renderQuestionContent(q){
+  const flagStage=document.getElementById('flagStage');
+  const questionEl=document.getElementById('question');
+  if(q.cat==='flags'){
+    const match=String(q.q).match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
+    const flag=match?match[0]:'';
+    flagStage.textContent=flag;
+    flagStage.classList.toggle('hidden',!flag);
+    questionEl.textContent=String(q.q).replace(flag,'').replace(/\s+/g,' ').trim();
+  }else{
+    flagStage.textContent='';
+    flagStage.classList.add('hidden');
+    questionEl.textContent=q.q;
+  }
+}
 function updateHelpUI(){
   const btn=document.getElementById('helpBtn'),status=document.getElementById('helpStatus');
   if(!btn||!st.teams.length)return;
@@ -374,7 +391,7 @@ function beginQuestion(){
   document.getElementById('difficulty').textContent='صعوبة '+st.current.level+'/5 • '+POINTS[st.current.level]+' نقطة';
   document.getElementById('progressBar').style.width=((st.qnum/st.rounds)*100)+'%';
   document.getElementById('ageHint').textContent='فئة '+AGES[st.teams[st.turn].age];
-  document.getElementById('question').textContent=st.current.q;
+  renderQuestionContent(st.current);
   document.getElementById('answerBox').innerHTML='<div class="answerLabel">الإجابة</div>'+st.current.a;
   document.getElementById('answerBox').classList.add('hidden');
   document.getElementById('resultBtns').classList.add('hidden');
@@ -413,8 +430,40 @@ function useLifeline(){
   if(!opts){toast('تعذر تجهيز خيارات موثوقة لهذا السؤال — لم تُحسب المساعدة');return}
   st.helpUsed[st.turn]=true;haptic('light');updateHelpUI();
   const box=document.getElementById('choices');
-  box.innerHTML=opts.map((x,i)=>'<button class="choice" type="button">'+['أ','ب','ج'][i]+'. '+x+'</button>').join('');
+  box.innerHTML='';
+  opts.forEach((answer,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice';
+    btn.type='button';
+    btn.textContent=['أ','ب','ج'][i]+'. '+answer;
+    btn.dataset.answer=answer;
+    btn.addEventListener('click',()=>selectChoice(btn,answer));
+    box.appendChild(btn);
+  });
   box.classList.remove('hidden');
+}
+function selectChoice(btn,answer){
+  if(btn.disabled)return;
+  clearTimer();stopAll();
+  const buttons=[...document.querySelectorAll('#choices .choice')];
+  buttons.forEach(b=>b.disabled=true);
+  const correct=answer===st.current.a;
+  if(correct){
+    btn.classList.add('selectedCorrect');
+    st.scores[st.turn]+=POINTS[st.current.level]||100;
+    play('correct');haptic('success');
+  }else{
+    btn.classList.add('selectedWrong');
+    const right=buttons.find(b=>b.dataset.answer===st.current.a);
+    if(right)right.classList.add('revealCorrect');
+    play(Math.random()<.5?'wrong1':'wrong2');haptic('error');
+  }
+  updateScores();
+  document.getElementById('answerBox').innerHTML='<div class="answerLabel">الإجابة</div>'+st.current.a;
+  document.getElementById('answerBox').classList.remove('hidden');
+  document.getElementById('revealBtn').classList.add('hidden');
+  document.getElementById('resultBtns').classList.add('hidden');
+  setTimeout(nextTurn,1300);
 }
 function startTimer(){clearTimer();st.deadline=Date.now()+15000;st.countdownStarted=false;document.getElementById('timer').textContent='15';play('thinking',true);st.timer=setInterval(tick,100);tick()}
 function tick(){let ms=st.deadline-Date.now();if(ms<=0){document.getElementById('timer').textContent='0';clearTimer();stopAll();play('timeup');haptic('error');reveal(true);return}let sec=Math.ceil(ms/1000);document.getElementById('timer').textContent=sec;if(sec<=9&&!st.countdownStarted){st.countdownStarted=true;A.thinking.pause();A.thinking.currentTime=0;play('countdown')}}
