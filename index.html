@@ -670,8 +670,15 @@ function auditArabicText(){
     [' / ','استخدم «أو» أو الأقواس بدل الشرطة المائلة في النص العربي'],
     [' ...','استخدم علامة الحذف العربية …']
   ];
+  const hasExactArabicWord=(text,word)=>{
+    const padded=' '+String(text).replace(/[،؛:؟!«»()"'.\-—_]/g,' ')+' ';
+    return padded.includes(' '+word+' ');
+  };
   const scan=(text,where)=>{
-    for(const [bad,note] of forbidden){const esc=bad.replace(/[.*+?^${}()|[\]\\]/g,'\\for(const [bad,note] of forbidden)if(String(text).includes(bad))errors.push(where+': '+note+' — '+bad);');const re=/^[\u0600-\u06FF]+$/.test(bad)?new RegExp('(^|[^\\u0600-\\u06FF])'+esc+'(?=$|[^\\u0600-\\u06FF])'):null;if(re?re.test(String(text)):String(text).includes(bad))errors.push(where+': '+note+' — '+bad);}
+    for(const [bad,note] of forbidden){
+      const hit=/^[\u0600-\u06FF]+$/.test(bad)?hasExactArabicWord(text,bad):String(text).includes(bad);
+      if(hit)errors.push(where+': '+note+' — '+bad);
+    }
     if(/\s+؟$/.test(String(text)))errors.push(where+': توجد مسافة زائدة قبل علامة الاستفهام');
     if(/  +/.test(String(text)))errors.push(where+': توجد مسافات متكررة');
   };
@@ -682,7 +689,7 @@ function auditArabicText(){
   return report;
 }
 auditArabicText();
-function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختار فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};updateScores();beginQuestion()}
+function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختر فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};updateScores();beginQuestion()}
 function showTurnIntro(){clearTimer();stopAll();document.getElementById('turnIntroTeam').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;show('turnIntro');play('transition');setTimeout(()=>{if(document.getElementById('turnIntro').classList.contains('active'))beginQuestion()},3000)}
 const HISTORY_KEY='tahadi_question_history_v2';
 function loadHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}')}catch(e){return {}}}
