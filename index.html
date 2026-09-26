@@ -735,6 +735,14 @@ function normalizeMentionChallenge(q){
   }
 }
 for(const q of Q)normalizeMentionChallenge(q);
+for(const q of Q){
+  if(/^اذكر 3 /.test(q.q)){
+    q.q=q.q
+      .replace('بأربعة أحرف مختلفة','بثلاثة أحرف مختلفة')
+      .replace('من 6 دول مختلفة','من 3 دول مختلفة');
+  }
+}
+
 
 function verifiedSourcesFor(q){
   if(q.cat==='flags')return ['cia_factbook','restcountries'];
