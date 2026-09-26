@@ -610,6 +610,32 @@ function verifiedSourcesFor(q){
   return ['nasa_solar','nasa_planets'];
 }
 for(const q of Q){q.sources=verifiedSourcesFor(q);q.verified=q.sources.length===2;}
+/* توحيد الأفكار المتشابهة لمنع ظهور صياغتين للفكرة نفسها في التحدي الواحد */
+const SEMANTIC_TOPIC_RULES=[
+  [/الكوكب الأحمر/,'concept_mars_red'],
+  [/أكثر كواكب.*حرارة|الكوكب الأكثر حرارة/,'concept_venus_hottest'],
+  [/أكبر كوكب/,'concept_jupiter_largest'],
+  [/أصغر كوكب/,'concept_mercury_smallest'],
+  [/يشتهر.*حلقات|نظام حلقات/,'concept_saturn_rings'],
+  [/يدور.*جانبه|يميل محور دورانه/,'concept_uranus_tilt'],
+  [/أقرب كوكب.*الشمس/,'concept_mercury_nearest'],
+  [/أكبر عضو.*الإنسان/,'concept_skin_largest'],
+  [/أصغر عظمة|عظمة الركاب/,'concept_stapes'],
+  [/يتجمد الماء/,'concept_water_freeze'],
+  [/أول الخلفاء الراشدين/,'concept_caliph1'],
+  [/ثاني الخلفاء الراشدين/,'concept_caliph2'],
+  [/ثالث الخلفاء الراشدين/,'concept_caliph3'],
+  [/رابع الخلفاء الراشدين/,'concept_caliph4'],
+  [/فتح مكة/,'concept_fath_makkah'],
+  [/صلح الحديبية/,'concept_hudaybiyah'],
+  [/سيف الله المسلول/,'concept_khalid_title'],
+  [/أول مؤذن/,'concept_first_muezzin'],
+  [/زوجة النبي.*الأولى/,'concept_khadija_first']
+];
+for(const q of Q){
+  const text=q.q+' '+q.a;
+  for(const [re,topic] of SEMANTIC_TOPIC_RULES){if(re.test(text)){q.topicId=topic;break}}
+}
 
 const AGE_LEVELS=[[1,2],[2,3],[3,4],[4,5],[4,5]];
 function questionFits(q,age){const range=AGE_LEVELS[age]||[1,5];return q.minAge<=age&&q.maxAge>=age&&q.level>=range[0]&&q.level<=range[1]}
