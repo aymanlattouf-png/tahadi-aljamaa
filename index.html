@@ -526,6 +526,34 @@ addMany('islamic',[
 ]);
 
 
+
+/* إزالة أي سؤال مطابق تمامًا ظهر مرتين في النسخ السابقة، ثم تعويضه بأسئلة جديدة */
+(function(){
+  const seen=new Set();
+  for(let i=Q.length-1;i>=0;i--){
+    if(seen.has(Q[i].id)) Q.splice(i,1);
+    else seen.add(Q[i].id);
+  }
+})();
+addMany('general',[
+['ما ثاني أكبر كوكب في المجموعة الشمسية؟','زحل',3,1,4,'second_largest_planet','science'],
+['ما ثاني أصغر كوكب في المجموعة الشمسية؟','المريخ',3,1,4,'second_smallest_planet','science']
+]);
+addMany('math',[
+['احسب وفق ترتيب العمليات: 37 + 9 × 2','55',4,2,4,'replacement_math_1','order_ops'],
+['إذا كان ثمن 7 قطع متساوية هو 84 ريالًا، فما ثمن القطعة الواحدة؟','12 ريالًا',4,2,4,'replacement_math_2','unit_rate']
+]);
+addMany('islamic',[
+['كم عدد آيات سورة الفاتحة؟','7 آيات',3,1,4,'q_fatiha_verses','quran'],
+['في أي سورة توجد آية الكرسي؟','سورة البقرة',4,2,4,'q_ayat_kursi_surah','quran'],
+['ما السورة التي تحمل اسم يوم من أيام الأسبوع؟','سورة الجمعة',3,1,4,'q_friday_surah','quran'],
+['ما السورة التي تحمل اسم معدن؟','سورة الحديد',4,2,4,'q_iron_surah','quran'],
+['ما السورة التي تحمل اسم القمر؟','سورة القمر',3,1,4,'q_moon_surah','quran'],
+['ما السورة التي تحمل اسم النجم؟','سورة النجم',3,1,4,'q_star_surah','quran'],
+['ما السورة التي تحمل اسم النساء؟','سورة النساء',2,0,4,'q_women_surah','quran'],
+['أي سورة تبدأ بقول الله تعالى: «الحمد لله رب العالمين»؟','سورة الفاتحة',2,0,4,'q_fatiha_opening','quran']
+]);
+
 const AGE_LEVELS=[[1,2],[2,3],[3,4],[4,5],[4,5]];
 function questionFits(q,age){const range=AGE_LEVELS[age]||[1,5];return q.minAge<=age&&q.maxAge>=age&&q.level>=range[0]&&q.level<=range[1]}
 function auditQuestionBank(){
