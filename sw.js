@@ -1,4 +1,4 @@
-const CACHE='tahadi-v21';
+const CACHE='tahadi-v22';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./privacy.html','./support.html',
   './assets/thinking.wav','./assets/setup.wav','./assets/countdown.wav',
