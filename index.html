@@ -216,7 +216,7 @@ const AUDIO_FILES={
   win2:'assets/win2.wav',
   transition:'assets/transition.wav'
 };
-const MUSIC_KEYS=new Set(['thinking','setup']);
+const MUSIC_KEYS=new Set(['thinking','setup','transition']);
 const AUDIO_BASE_GAIN={thinking:.58,setup:.72,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.95,win1:.9,win2:.9,transition:.52};
 const AUDIO_PREFS_KEY='tahadi_audio_v3';
 
@@ -492,12 +492,17 @@ async function toggleMusicMuteFromButton(){
   musicMuted=!musicMuted;
 
   if(musicMuted){
+    stopOpeningMusic();
     for(const key of MUSIC_KEYS)stopSound(key);
   }else{
     await ensureAudioContext();
-    const gameActive=document.getElementById('game')?.classList.contains('active');
-    const remaining=st?.deadline?Math.ceil((st.deadline-Date.now())/1000):0;
-    if(gameActive&&st?.timer&&remaining>9)play('thinking',true);
+    const activeScreen=document.querySelector('.screen.active')?.id;
+    if(activeScreen==='home'){
+      startOpeningMusic();
+    }else if(activeScreen==='game'){
+      const remaining=st?.deadline?Math.ceil((st.deadline-Date.now())/1000):0;
+      if(st?.timer&&remaining>9)play('thinking',true);
+    }
   }
 
   syncAudioGains();
