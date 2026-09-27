@@ -6,7 +6,99 @@
 .pointsBadge{display:inline-flex;align-items:center;gap:6px;background:#f59e0b1f;border:1px solid #f59e0b55;color:#fde68a;border-radius:999px;padding:7px 10px;font-weight:1000;font-size:13px}.lifelineRow{display:flex;align-items:center;gap:8px;margin:10px 0}.helpBtn{flex:1;background:#38bdf822!important;color:#e0f2fe!important;border:1px solid #38bdf866!important}.helpBtn:disabled{opacity:.45;cursor:not-allowed}.helpStatus{font-size:12px;color:var(--muted);white-space:nowrap}.choices{display:grid;gap:9px;margin:10px 0 14px}.choice{width:100%;border:1px solid #ffffff2b;background:#ffffff10;color:#fff;border-radius:15px;padding:13px 14px;text-align:right;font-size:17px;font-weight:800}.choice.correctHint{border-color:#38bdf880}.choice:active{transform:scale(.99)}
 .flagStage{display:flex;align-items:center;justify-content:center;min-height:180px;margin:10px 0 12px;border-radius:24px;background:#ffffff08;border:1px solid #ffffff18;font-size:126px;line-height:1;box-shadow:inset 0 0 0 1px #ffffff08}.flagStage.hidden{display:none!important}@media(max-width:430px){.flagStage{min-height:155px;font-size:110px}}
 .helpUsedBanner{display:flex;align-items:center;gap:12px;margin:10px 0 12px;padding:14px 16px;border-radius:18px;background:#0f766e33;border:1px solid #2dd4bf88;color:#ecfeff}.helpUsedIcon{font-size:30px}.helpUsedText{display:flex;flex-direction:column;gap:2px}.helpUsedText b{font-size:17px}.helpUsedText span{font-size:13px;color:#ccfbf1}.choice.selectedCorrect{background:#22c55e33;border-color:#22c55e;color:#dcfce7}.choice.selectedWrong{background:#ef444433;border-color:#ef4444;color:#fee2e2}.choice.revealCorrect{border-color:#22c55e;background:#22c55e22}.choice:disabled{opacity:1;cursor:default}
-.settingsTopBtn{border:1px solid #ffffff24;background:#ffffff14;color:#fff;border-radius:999px;min-height:44px;padding:10px 14px;font-size:14px;font-weight:900;display:flex;align-items:center;gap:6px}.settingsModalV2{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px}.settingsModalV2.hidden{display:none!important}.settingsBackdropV2{position:absolute;inset:0;background:#020617d9;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.settingsCardV2{position:relative;width:min(520px,100%);max-height:90vh;overflow:auto;background:#0b1629;border:1px solid #ffffff26;border-radius:26px;padding:20px;box-shadow:0 24px 70px #0009}.settingsHeadV2{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.settingsHeadV2 h2{margin:3px 0 0;font-size:26px}.settingsEyebrowV2{font-size:13px;color:#fbbf24;font-weight:900}.settingsCloseV2{border:0;background:#ffffff12;color:#fff;border-radius:14px;width:44px;height:44px;font-size:28px;line-height:1}.settingsMasterV2{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px;border-radius:18px;background:#ffffff0c;border:1px solid #ffffff16;margin-bottom:12px}.settingsMasterV2>div{display:flex;flex-direction:column;gap:4px}.settingsMasterV2 b{font-size:16px}.settingsMasterV2 span{font-size:12px;color:var(--muted)}.masterSoundBtnV2{border:0;background:#f59e0b22;color:#fff;border:1px solid #f59e0b66;border-radius:16px;width:52px;height:52px;font-size:23px}.settingSliderV2{padding:16px;border:1px solid #ffffff14;border-radius:18px;background:#ffffff08;margin-top:12px}.musicSettingV2{margin-top:0}.effectsSettingV2{margin-top:14px}.settingSliderHeadV2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.settingSliderHeadV2 label{font-weight:900;font-size:16px}.settingSliderHeadV2 output{font-weight:1000;color:#fde68a;font-variant-numeric:tabular-nums}.volumeSliderV2{width:100%;direction:ltr;appearance:none;-webkit-appearance:none;background:transparent;min-height:44px}.volumeSliderV2::-webkit-slider-runnable-track{height:9px;border-radius:999px;background:#334155}.volumeSliderV2::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid #fbbf24;margin-top:-9.5px;box-shadow:0 2px 9px #0008}.volumeSliderV2::-moz-range-track{height:9px;border-radius:999px;background:#334155}.volumeSliderV2::-moz-range-progress{height:9px;border-radius:999px;background:#fbbf24}.volumeSliderV2::-moz-range-thumb{width:23px;height:23px;border-radius:50%;background:#fff;border:4px solid #fbbf24}.sliderEndsV2{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:-2px}.settingsHintV2{font-size:12px;color:var(--muted);line-height:1.6;text-align:center;margin:4px 0 10px}@media(max-width:430px){.settingsCardV2{padding:17px}.settingsHeadV2 h2{font-size:22px}.settingsTopBtn{font-size:13px;padding:9px 11px}}</style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><button id="settingsBtnV2" class="settingsTopBtn" type="button" aria-label="فتح الإعدادات">⚙️ الإعدادات</button></div>
+.settingsTopBtn{border:1px solid #ffffff24;background:#ffffff14;color:#fff;border-radius:999px;min-height:44px;padding:10px 14px;font-size:14px;font-weight:900;display:flex;align-items:center;gap:6px}.settingsModalV2{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px}.settingsModalV2.hidden{display:none!important}.settingsBackdropV2{position:absolute;inset:0;background:#020617d9;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.settingsCardV2{position:relative;width:min(520px,100%);max-height:90vh;overflow:auto;background:#0b1629;border:1px solid #ffffff26;border-radius:26px;padding:20px;box-shadow:0 24px 70px #0009}.settingsHeadV2{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.settingsHeadV2 h2{margin:3px 0 0;font-size:26px}.settingsEyebrowV2{font-size:13px;color:#fbbf24;font-weight:900}.settingsCloseV2{border:0;background:#ffffff12;color:#fff;border-radius:14px;width:44px;height:44px;font-size:28px;line-height:1}.settingsMasterV2{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px;border-radius:18px;background:#ffffff0c;border:1px solid #ffffff16;margin-bottom:12px}.settingsMasterV2>div{display:flex;flex-direction:column;gap:4px}.settingsMasterV2 b{font-size:16px}.settingsMasterV2 span{font-size:12px;color:var(--muted)}.masterSoundBtnV2{border:0;background:#f59e0b22;color:#fff;border:1px solid #f59e0b66;border-radius:16px;width:52px;height:52px;font-size:23px}.settingSliderV2{padding:16px;border:1px solid #ffffff14;border-radius:18px;background:#ffffff08;margin-top:12px}.musicSettingV2{margin-top:0}.effectsSettingV2{margin-top:14px}.settingSliderHeadV2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.settingSliderHeadV2 label{font-weight:900;font-size:16px}.settingSliderHeadV2 output{font-weight:1000;color:#fde68a;font-variant-numeric:tabular-nums}.volumeSliderV2{width:100%;direction:ltr;appearance:none;-webkit-appearance:none;background:transparent;min-height:44px}.volumeSliderV2::-webkit-slider-runnable-track{height:9px;border-radius:999px;background:#334155}.volumeSliderV2::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid #fbbf24;margin-top:-9.5px;box-shadow:0 2px 9px #0008}.volumeSliderV2::-moz-range-track{height:9px;border-radius:999px;background:#334155}.volumeSliderV2::-moz-range-progress{height:9px;border-radius:999px;background:#fbbf24}.volumeSliderV2::-moz-range-thumb{width:23px;height:23px;border-radius:50%;background:#fff;border:4px solid #fbbf24}.sliderEndsV2{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:-2px}.settingsHintV2{font-size:12px;color:var(--muted);line-height:1.6;text-align:center;margin:4px 0 10px}@media(max-width:430px){.settingsCardV2{padding:17px}.settingsHeadV2 h2{font-size:22px}.settingsTopBtn{font-size:13px;padding:9px 11px}}
+.musicMuteTopBtn{border:1px solid #ffffff24;background:#ffffff14;color:#fff;border-radius:999px;min-width:44px;height:44px;padding:0 11px;font-size:18px;font-weight:900;display:grid;place-items:center}.musicMuteTopBtn.muted{background:#ef444422;border-color:#ef444466}.topAudioActions{display:flex;align-items:center;gap:7px}
+@media(max-width:600px){
+  html,body{height:100%;overflow:hidden}
+  body{min-height:100dvh}
+  .app{height:100dvh;box-sizing:border-box;overflow:hidden;padding:max(8px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+  .top{flex:0 0 auto;margin-bottom:6px;min-height:40px}
+  .brand{font-size:19px}
+  .settingsTopBtn{min-height:40px;padding:7px 10px;font-size:12px}
+  .musicMuteTopBtn{min-width:40px;height:40px;font-size:17px;padding:0 9px}
+  .screen.active{display:flex;flex-direction:column;min-height:0;flex:1;overflow:hidden}
+  .panel{padding:10px;border-radius:18px}
+  .btn{padding:10px 12px;margin:4px 0;border-radius:13px;font-size:15px;min-height:40px}
+  .nav{gap:6px;margin-top:5px;flex:0 0 auto}
+  .nav .btn{font-size:13px;padding:8px 7px;min-height:36px}
+  .stepper{margin:2px 0 7px}
+  .setupTitle{font-size:21px}
+  .setupSub{font-size:12px;line-height:1.35;margin:0 0 7px}
+  .setupTeams{gap:6px}
+  .teamCard{padding:8px;border-radius:15px}
+  .teamTag{font-size:11px;margin-bottom:4px}
+  .field{margin:5px 0}
+  .field label{font-size:12px;margin-bottom:3px}
+  .field input,.field select{padding:8px 7px;border-radius:10px;font-size:16px;min-height:38px}
+  .field small{font-size:9px;line-height:1.25;margin-top:2px}
+  #setup>.panel{flex:1;min-height:0}
+  #setup>.nav{margin-top:5px}
+  .sectionHead{margin:3px 0 6px;align-items:center}
+  .sectionHead h2{font-size:20px}
+  .sectionHead .small{font-size:10px;line-height:1.25}
+  .selectionCount{font-size:11px}
+  .cats{grid-template-columns:1fr 1fr;gap:6px;flex:1;min-height:0}
+  .cat{min-height:0;height:auto;padding:6px 5px;border-radius:14px;font-size:12px;line-height:1.15}
+  .cat .ico{font-size:27px;margin-bottom:3px}
+  #categories>#allBtn,#categories>.btn{min-height:36px;padding:7px 10px;margin:3px 0;font-size:13px}
+  #categories>.nav{margin-top:2px}
+  .gameMeta{margin-bottom:1px}
+  .qIndex,.difficulty{font-size:10px}
+  .progressWrap{height:4px;margin:3px 0 5px}
+  .questionCard{padding:8px!important;border-radius:16px!important}
+  .qhead{gap:5px}
+  .badge{padding:5px 7px;font-size:11px}
+  .turnPill{font-size:10px!important;padding:4px 7px!important;margin:4px auto!important}
+  .timer{font-size:39px;margin:2px 0}
+  .flagStage{min-height:88px!important;font-size:72px!important;margin:3px 0 4px!important;border-radius:15px!important}
+  .question{font-size:18px;line-height:1.3;min-height:54px;padding:2px 0}
+  .lifelineRow{margin:4px 0;gap:5px}
+  .helpBtn{min-height:36px!important;font-size:13px!important;padding:7px!important}
+  .helpStatus{font-size:10px}
+  .helpUsedBanner{margin:4px 0;padding:7px 9px;border-radius:13px}
+  .helpUsedIcon{font-size:20px}.helpUsedText b{font-size:12px}.helpUsedText span{font-size:10px}
+  .choices{gap:5px;margin:4px 0 5px}
+  .choice{padding:8px 10px;border-radius:12px;font-size:14px;min-height:38px}
+  #revealBtn{min-height:36px;padding:7px;font-size:14px}
+  .answer{padding:8px;font-size:16px;margin:4px 0;border-radius:13px}
+  .resultBtns{gap:6px}
+  .resultBtns .btn{min-height:36px;padding:7px;font-size:14px}
+  .scoreline{gap:6px;margin:4px 0}
+  .score{padding:5px;border-radius:12px;font-size:10px}
+  .score b{font-size:18px;margin-top:1px}
+  #game>.nav{margin-top:2px}
+  .hero{padding:22px 6px 12px}
+  .heroMark{width:62px;height:62px;margin-bottom:10px;font-size:31px;border-radius:20px}
+  .hero h1{font-size:32px;margin-bottom:6px}
+  .hero p{font-size:15px}
+  .homeSettingsBtn{margin-top:4px}
+  .finishCard{padding:12px!important}
+  .finishIcon{font-size:38px!important}
+  .winner{font-size:25px;margin:7px 0}
+  #finalScore{font-size:16px!important;line-height:1.5!important;margin:7px 0!important}
+  .settingsModalV2{padding:10px}
+  .settingsCardV2{max-height:calc(100dvh - 20px);padding:14px;border-radius:20px}
+  .settingsHeadV2{margin-bottom:10px}
+  .settingsHeadV2 h2{font-size:20px}
+  .settingsMasterV2{padding:10px;margin-bottom:8px}
+  .settingSliderV2{padding:10px;margin-top:8px}
+  .volumeSliderV2{min-height:40px}
+}
+@media(max-width:390px) and (max-height:700px){
+  .brand{font-size:17px}
+  .top{min-height:36px}
+  .settingsTopBtn{min-height:36px;padding:6px 8px}
+  .musicMuteTopBtn{min-width:36px;height:36px}
+  .cat .ico{font-size:23px}
+  .cat{font-size:11px;padding:4px}
+  .question{font-size:16px;min-height:46px}
+  .flagStage{min-height:72px!important;font-size:60px!important}
+  .timer{font-size:34px}
+  .scoreline{margin:2px 0}
+  .score{padding:3px}
+  .nav .btn{min-height:33px;padding:6px}
+}
+</style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><div class="topAudioActions"><button id="musicMuteBtn" class="musicMuteTopBtn" type="button" aria-label="كتم أو تشغيل الموسيقى" title="كتم/تشغيل الموسيقى">🎵</button><button id="settingsBtnV2" class="settingsTopBtn" type="button" aria-label="فتح الإعدادات">⚙️ الإعدادات</button></div></div>
 <div id="settingsModalV2" class="settingsModalV2 hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitleV2">
   <div class="settingsBackdropV2" data-close-settings="true"></div>
   <div class="settingsCardV2">
@@ -26,30 +118,20 @@
       <button id="soundBtn" class="masterSoundBtnV2" type="button" aria-label="كتم أو تشغيل كل الأصوات">🔊</button>
     </div>
 
-    <div class="settingSliderV2 musicSettingV2">
+    <div class="settingSliderV2 masterLevelSettingV2">
       <div class="settingSliderHeadV2">
-        <label for="musicVolume">🎵 مستوى الموسيقى</label>
+        <label for="musicVolume">🔊 مستوى الصوت</label>
         <output id="musicVolumeValue" for="musicVolume">70%</output>
       </div>
       <input id="musicVolume" class="volumeSliderV2" type="range" min="0" max="100" step="1" value="70">
       <div class="sliderEndsV2"><span>0%</span><span>100%</span></div>
     </div>
 
-    <div class="settingSliderV2 effectsSettingV2">
-      <div class="settingSliderHeadV2">
-        <label for="effectsVolume">🔊 مستوى المؤثرات الصوتية</label>
-        <output id="effectsVolumeValue" for="effectsVolume">90%</output>
-      </div>
-      <input id="effectsVolume" class="volumeSliderV2" type="range" min="0" max="100" step="1" value="90">
-      <div class="sliderEndsV2"><span>0%</span><span>100%</span></div>
-    </div>
-
-    
     <button id="settingsDoneV2" class="btn" type="button">تم</button>
   </div>
 </div>
 <section id="home" class="screen active"><div class="hero"><div class="heroMark">🔥</div><span class="eyebrow">لعبة جماعية عربية</span><h1>تحدّي الجَمعة</h1><p>أسئلة على قدّ أعماركم، منافسة سريعة، وضحك أكثر.</p></div><button class="btn" onclick="goSetup()">ابدأ التحدّي</button><button class="btn secondary homeSettingsBtn" type="button" onclick="openSettingsV2()">⚙️ الإعدادات</button><p class="micro center">فريقان • 15 ثانية لكل سؤال • من دون تسجيل</p></section>
-<section id="setup" class="screen"><div class="stepper"><span class="stepDot active"></span><span class="stepDot"></span></div><div class="panel"><h2 class="setupTitle">جهّز الفريقين</h2><p class="setupSub">اختر الفئة العمرية لكل فريق حتى تكون الأسئلة مناسبة فعلًا لمستواهم.</p><div class="row setupTeams"><div class="teamCard red"><div class="teamTag">🔴 الفريق الأحمر</div><div class="field"><label for="t1">اسم الفريق</label><input id="t1" value="الفريق الأحمر" autocomplete="off"></div><div class="field"><label for="a1">الفئة العمرية</label><select id="a1"></select><small>تُختار الأسئلة وفق هذه الفئة العمرية، وليست الأسئلة نفسها للجميع.</small></div></div><div class="teamCard blue"><div class="teamTag">🔵 الفريق الأزرق</div><div class="field"><label for="t2">اسم الفريق</label><input id="t2" value="الفريق الأزرق" autocomplete="off"></div><div class="field"><label for="a2">الفئة العمرية</label><select id="a2"></select><small>يمكن اختيار عمر مختلف لكل فريق.</small></div></div></div><div class="field"><label for="rounds">عدد الأسئلة في التحدّي</label><small>العدد زوجي دائمًا حتى يحصل الفريقان على نفس عدد الأسئلة.</small><select id="rounds"><option>6</option><option selected>10</option><option>14</option></select></div><button class="btn" onclick="goCategories()">اختيار الفئات</button></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="resetForm()">↻ إعادة الإعداد</button></div></section>
+<section id="setup" class="screen"><div class="stepper"><span class="stepDot active"></span><span class="stepDot"></span></div><div class="panel"><h2 class="setupTitle">جهّز الفريقين</h2><p class="setupSub">اختر الفئة العمرية لكل فريق حتى تكون الأسئلة مناسبة فعلًا لمستواهم.</p><div class="row setupTeams"><div class="teamCard red"><div class="teamTag">🔴 الفريق الأحمر</div><div class="field"><label for="t1">اسم الفريق</label><input id="t1" value="الفريق الأحمر" autocomplete="off"></div><div class="field"><label for="a1">الفئة العمرية</label><select id="a1"></select><small>تُختار الأسئلة وفق هذه الفئة العمرية، وليست الأسئلة نفسها للجميع.</small></div></div><div class="teamCard blue"><div class="teamTag">🔵 الفريق الأزرق</div><div class="field"><label for="t2">اسم الفريق</label><input id="t2" value="الفريق الأزرق" autocomplete="off"></div><div class="field"><label for="a2">الفئة العمرية</label><select id="a2"></select><small>يمكن اختيار عمر مختلف لكل فريق.</small></div></div></div><div class="field"><label for="rounds">عدد الأسئلة في التحدّي</label><select id="rounds"><option>6</option><option selected>10</option><option>14</option></select></div><button class="btn" onclick="goCategories()">اختيار الفئات</button></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="resetForm()">↻ إعادة الإعداد</button></div></section>
 <section id="categories" class="screen"><div class="stepper"><span class="stepDot"></span><span class="stepDot active"></span></div><div class="sectionHead"><div><h2>اختر الفئات</h2><div class="small">اختر فئة أو أكثر. عند اختيار عدة فئات، يظهر سؤال من كل فئة قبل بدء دورة جديدة.</div></div><div id="selectionCount" class="selectionCount">0 محددة</div></div><div id="cats" class="cats"></div><button id="allBtn" class="btn secondary" onclick="toggleAll()">اختيار الكل</button><button class="btn" onclick="startChallenge()">ابدأ التحدّي 🔥</button><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="show('setup')">رجوع</button></div></section>
 <section id="turnIntro" class="screen"><div class="panel center" style="margin-top:22vh;padding:38px 18px"><div style="font-size:18px;color:var(--muted);font-weight:800">الدور الآن:</div><div id="turnIntroTeam" class="readyTeam"></div></div></section>
 <section id="game" class="screen"><div class="gameMeta"><span id="qIndex" class="qIndex"></span><span id="difficulty" class="difficulty"></span></div><div class="progressWrap"><div id="progressBar" class="progressBar"></div></div><div class="questionCard"><div class="qhead"><span id="turnBadge" class="badge"></span><span id="catBadge" class="badge"></span></div><div class="turnPill" id="ageHint"></div><div id="timer" class="timer">15</div><div id="flagStage" class="flagStage hidden"></div><div id="question" class="question"></div></div><div id="lifelineRow" class="lifelineRow"><button id="helpBtn" class="btn helpBtn" onclick="useLifeline()">🛟 مساعدة: 3 خيارات</button><span id="helpStatus" class="helpStatus"></span></div><div id="helpUsedBanner" class="helpUsedBanner hidden"><div class="helpUsedIcon">🛟</div><div class="helpUsedText"><b>تم استخدام المساعدة</b><span>اختر الإجابة الصحيحة من بين 3 خيارات</span></div></div><div id="choices" class="choices hidden"></div><button id="revealBtn" class="btn" onclick="reveal()">إظهار الإجابة</button><div id="answerBox" class="answer hidden"></div><div id="resultBtns" class="resultBtns hidden"><button class="btn correct" onclick="mark(true)">✓ صحيحة</button><button class="btn wrong" onclick="mark(false)">✕ خاطئة</button></div><div class="scoreline"><div class="score team1"><span id="s1n"></span><b id="s1">0</b></div><div class="score team2"><span id="s2n"></span><b id="s2">0</b></div></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="restartSame()">🔄 تحدّي جديد</button></div></section>
@@ -78,8 +160,9 @@ const AUDIO_SETTINGS_KEY='tahadi_audio_settings_v2';
 const MUSIC_KEYS=new Set(['thinking','setup']);
 const BASE_AUDIO_VOLUME={thinking:.55,setup:.75,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.9,win1:.9,win2:.9,transition:.9};
 let sound=true;
-let musicVolume=.70;
-let effectsVolume=.90;
+let musicMuted=false;
+let musicVolume=.80;
+let effectsVolume=.80;
 let audioCtx=null,musicGain=null,effectsGain=null,audioGraphReady=false;
 const trackGains={};
 
@@ -87,16 +170,19 @@ function loadAudioSettings(){
   try{
     const saved=JSON.parse(localStorage.getItem(AUDIO_SETTINGS_KEY)||localStorage.getItem('tahadi_audio_settings_v1')||'{}');
     if(typeof saved.sound==='boolean')sound=saved.sound;
-    if(Number.isFinite(saved.musicVolume))musicVolume=Math.max(0,Math.min(1,saved.musicVolume));
-    if(Number.isFinite(saved.effectsVolume))effectsVolume=Math.max(0,Math.min(1,saved.effectsVolume));
+    if(typeof saved.musicMuted==='boolean')musicMuted=saved.musicMuted;
+    const unified=Number.isFinite(saved.masterVolume)?saved.masterVolume:(Number.isFinite(saved.musicVolume)?saved.musicVolume:(Number.isFinite(saved.effectsVolume)?saved.effectsVolume:null));
+    if(Number.isFinite(unified)){musicVolume=Math.max(0,Math.min(1,unified));effectsVolume=musicVolume;}
   }catch(e){}
 }
 function saveAudioSettings(){
-  try{localStorage.setItem(AUDIO_SETTINGS_KEY,JSON.stringify({sound,musicVolume,effectsVolume}))}catch(e){}
+  try{localStorage.setItem(AUDIO_SETTINGS_KEY,JSON.stringify({sound,musicMuted,masterVolume:musicVolume,musicVolume,effectsVolume}))}catch(e){}
 }
 function effectiveVolume(key){
   const channel=MUSIC_KEYS.has(key)?musicVolume:effectsVolume;
-  return sound?(BASE_AUDIO_VOLUME[key]??1)*channel:0;
+  if(!sound)return 0;
+  if(MUSIC_KEYS.has(key)&&musicMuted)return 0;
+  return (BASE_AUDIO_VOLUME[key]??1)*channel;
 }
 function ensureAudioGraph(){
   if(audioGraphReady){
@@ -135,7 +221,7 @@ function applyAudioVolumes(){
     const now=audioCtx?.currentTime||0;
     musicGain.gain.cancelScheduledValues(now);
     effectsGain.gain.cancelScheduledValues(now);
-    musicGain.gain.setValueAtTime(master*musicVolume,now);
+    musicGain.gain.setValueAtTime(master*(musicMuted?0:musicVolume),now);
     effectsGain.gain.setValueAtTime(master*effectsVolume,now);
     for(const [key,track] of Object.entries(trackGains)){
       track.gain.setValueAtTime(BASE_AUDIO_VOLUME[key]??1,now);
@@ -144,14 +230,19 @@ function applyAudioVolumes(){
     for(const [key,a] of Object.entries(A))a.volume=Math.max(0,Math.min(1,effectiveVolume(key)));
   }
 
-  const music=document.getElementById('musicVolume'),effects=document.getElementById('effectsVolume');
-  const musicOut=document.getElementById('musicVolumeValue'),effectsOut=document.getElementById('effectsVolumeValue');
-  if(music){music.value=Math.round(musicVolume*100);music.disabled=false}
-  if(effects){effects.value=Math.round(effectsVolume*100);effects.disabled=false}
-  if(musicOut)musicOut.textContent=Math.round(musicVolume*100)+'%';
-  if(effectsOut)effectsOut.textContent=Math.round(effectsVolume*100)+'%';
+  const level=document.getElementById('musicVolume');
+  const levelOut=document.getElementById('musicVolumeValue');
+  if(level){level.value=Math.round(musicVolume*100);level.disabled=false}
+  if(levelOut)levelOut.textContent=Math.round(musicVolume*100)+'%';
   const mute=document.getElementById('soundBtn');
   if(mute){mute.textContent=sound?'🔊':'🔇';mute.setAttribute('aria-pressed',sound?'false':'true')}
+  const musicMute=document.getElementById('musicMuteBtn');
+  if(musicMute){
+    musicMute.textContent=musicMuted?'🎵✕':'🎵';
+    musicMute.classList.toggle('muted',musicMuted);
+    musicMute.setAttribute('aria-pressed',musicMuted?'true':'false');
+    musicMute.title=musicMuted?'تشغيل الموسيقى':'كتم الموسيقى';
+  }
 }
 Object.values(A).forEach(a=>{a.preload='auto'});
 A.thinking.loop=true;
@@ -185,16 +276,18 @@ document.getElementById('settingsDoneV2').onclick=closeSettingsV2;
 document.querySelector('[data-close-settings="true"]').onclick=closeSettingsV2;
 document.getElementById('musicVolume').addEventListener('input',e=>{
   ensureAudioGraph();
-  musicVolume=Math.max(0,Math.min(1,+e.target.value/100));
-  if(!sound&&musicVolume>0)sound=true;
+  const level=Math.max(0,Math.min(1,+e.target.value/100));
+  musicVolume=level;
+  effectsVolume=level;
+  if(!sound&&level>0)sound=true;
   applyAudioVolumes();saveAudioSettings();
 });
-document.getElementById('effectsVolume').addEventListener('input',e=>{
+document.getElementById('musicMuteBtn').onclick=()=>{
   ensureAudioGraph();
-  effectsVolume=Math.max(0,Math.min(1,+e.target.value/100));
-  if(!sound&&effectsVolume>0)sound=true;
-  applyAudioVolumes();saveAudioSettings();
-});
+  musicMuted=!musicMuted;
+  applyAudioVolumes();
+  saveAudioSettings();
+};
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('settingsModalV2').classList.contains('hidden'))closeSettingsV2()});
 const POINTS={1:100,2:200,3:300,4:400,5:500}; let st={teams:[],rounds:10,selected:[],turn:0,qnum:0,scores:[0,0],current:null,used:new Set(),usedTopics:new Set(),usedTypes:[],catCounts:{},categoryQueue:[],lastCategory:null,timer:null,deadline:0,countdownStarted:false,helpUsed:[false,false]};
