@@ -217,7 +217,7 @@ const AUDIO_FILES={
   transition:'assets/transition.wav'
 };
 const MUSIC_KEYS=new Set(['thinking','setup']);
-const AUDIO_BASE_GAIN={thinking:.58,setup:.72,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.95,win1:.9,win2:.9,transition:.82};
+const AUDIO_BASE_GAIN={thinking:.58,setup:.72,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.95,win1:.9,win2:.9,transition:.52};
 const AUDIO_PREFS_KEY='tahadi_audio_v3';
 
 let masterVolume=.80;
@@ -334,7 +334,7 @@ function stopOpeningMusic(){
   if(openingMusicTimer){clearTimeout(openingMusicTimer);openingMusicTimer=null}
   cleanupOpeningNodes();
 }
-function scheduleTone(freq,start,duration,type='triangle',gainValue=.055){
+function scheduleTone(freq,start,duration,type='triangle',gainValue=.075){
   if(!audioCtx||!musicBus)return;
   const osc=audioCtx.createOscillator();
   const gain=audioCtx.createGain();
@@ -360,7 +360,7 @@ function scheduleKick(start){
   osc.type='sine';
   osc.frequency.setValueAtTime(120,start);
   osc.frequency.exponentialRampToValueAtTime(48,start+.12);
-  gain.gain.setValueAtTime(.11,start);
+  gain.gain.setValueAtTime(.15,start);
   gain.gain.exponentialRampToValueAtTime(.0001,start+.16);
   osc.connect(gain);gain.connect(musicBus);
   osc.start(start);osc.stop(start+.18);
@@ -383,10 +383,10 @@ function scheduleOpeningPhrase(){
     const chord=chords[bar%4],root=roots[bar%4];
     for(let step=0;step<4;step++){
       scheduleKick(t+step*beat);
-      scheduleTone(root,t+step*beat,beat*.75,'sine',.035);
+      scheduleTone(root,t+step*beat,beat*.75,'sine',.050);
       const n=chord[(step+bar)%3]*(step===3?2:1);
-      scheduleTone(n,t+step*beat,beat*.58,step%2?'square':'triangle',.035);
-      if(step===1||step===3)scheduleTone(chord[(step+1)%3]*2,t+step*beat+.22,beat*.28,'triangle',.025);
+      scheduleTone(n,t+step*beat,beat*.58,step%2?'square':'triangle',.050);
+      if(step===1||step===3)scheduleTone(chord[(step+1)%3]*2,t+step*beat+.22,beat*.28,'triangle',.035);
     }
     t+=beat*4;
   }
