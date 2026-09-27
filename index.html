@@ -165,6 +165,7 @@
   .audioTopBtn{width:40px;min-height:40px;font-size:18px}
   .audioSettingsCard{padding:15px;border-radius:20px}
 }
+.audioTopBtn.muted{background:#ef444433!important;border-color:#ef4444!important;color:#fecaca!important;box-shadow:inset 0 0 0 1px #ef444455}.audioTopBtn:not(.muted){background:#22c55e20;border-color:#22c55e55}
 </style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><div class="audioTopControls"><button id="musicMuteBtn" class="audioTopBtn" type="button" aria-label="كتم الموسيقى" aria-pressed="false" title="كتم الموسيقى" onclick="toggleMusicMuteFromButton()">🎵</button><button id="settingsBtnV2" class="audioSettingsBtn" type="button" aria-label="فتح الإعدادات">⚙️ الإعدادات</button></div></div>
 <div id="settingsModalV2" class="audioSettingsModal hidden" role="dialog" aria-modal="true" aria-labelledby="audioSettingsTitle">
   <div class="audioSettingsBackdrop" data-close-settings="true"></div>
@@ -317,6 +318,93 @@ async function loadAudioBuffer(key){
   return audioLoads[key];
 }
 
+let openingMusicTimer=null;
+let openingMusicNodes=[];
+let openingMusicRunning=false;
+
+function cleanupOpeningNodes(){
+  for(const node of openingMusicNodes){
+    try{node.stop()}catch(e){}
+    try{node.disconnect()}catch(e){}
+  }
+  openingMusicNodes=[];
+}
+function stopOpeningMusic(){
+  openingMusicRunning=false;
+  if(openingMusicTimer){clearTimeout(openingMusicTimer);openingMusicTimer=null}
+  cleanupOpeningNodes();
+}
+function scheduleTone(freq,start,duration,type='triangle',gainValue=.055){
+  if(!audioCtx||!musicBus)return;
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,start);
+  gain.gain.setValueAtTime(.0001,start);
+  gain.gain.exponentialRampToValueAtTime(gainValue,start+.025);
+  gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+  osc.connect(gain);
+  gain.connect(musicBus);
+  osc.start(start);
+  osc.stop(start+duration+.03);
+  openingMusicNodes.push(osc);
+  osc.onended=()=>{
+    try{osc.disconnect();gain.disconnect()}catch(e){}
+    openingMusicNodes=openingMusicNodes.filter(n=>n!==osc);
+  };
+}
+function scheduleKick(start){
+  if(!audioCtx||!musicBus)return;
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  osc.type='sine';
+  osc.frequency.setValueAtTime(120,start);
+  osc.frequency.exponentialRampToValueAtTime(48,start+.12);
+  gain.gain.setValueAtTime(.11,start);
+  gain.gain.exponentialRampToValueAtTime(.0001,start+.16);
+  osc.connect(gain);gain.connect(musicBus);
+  osc.start(start);osc.stop(start+.18);
+  openingMusicNodes.push(osc);
+  osc.onended=()=>{try{osc.disconnect();gain.disconnect()}catch(e){};openingMusicNodes=openingMusicNodes.filter(n=>n!==osc)};
+}
+function scheduleOpeningPhrase(){
+  if(!openingMusicRunning||!audioCtx||!musicBus)return;
+  const start=audioCtx.currentTime+.04;
+  const beat=.48;
+  const roots=[130.81,103.83,155.56,116.54]; // C3, Ab2, Eb3, Bb2
+  const chords=[
+    [261.63,311.13,392.00],
+    [207.65,261.63,311.13],
+    [311.13,392.00,466.16],
+    [233.08,293.66,349.23]
+  ];
+  let t=start;
+  for(let bar=0;bar<8;bar++){
+    const chord=chords[bar%4],root=roots[bar%4];
+    for(let step=0;step<4;step++){
+      scheduleKick(t+step*beat);
+      scheduleTone(root,t+step*beat,beat*.75,'sine',.035);
+      const n=chord[(step+bar)%3]*(step===3?2:1);
+      scheduleTone(n,t+step*beat,beat*.58,step%2?'square':'triangle',.035);
+      if(step===1||step===3)scheduleTone(chord[(step+1)%3]*2,t+step*beat+.22,beat*.28,'triangle',.025);
+    }
+    t+=beat*4;
+  }
+  const phraseMs=Math.round((beat*4*8)*1000);
+  openingMusicTimer=setTimeout(scheduleOpeningPhrase,phraseMs-120);
+}
+async function startOpeningMusic(){
+  if(openingMusicRunning)return;
+  const ctx=await ensureAudioContext();
+  if(!ctx)return;
+  openingMusicRunning=true;
+  scheduleOpeningPhrase();
+}
+function maybeStartOpeningMusic(){
+  const active=document.querySelector('.screen.active')?.id;
+  if(['home','setup','categories'].includes(active))startOpeningMusic();
+}
+
 function stopSound(key){
   const item=activeSounds[key];
   if(item){
@@ -332,6 +420,7 @@ function stopSound(key){
 }
 function stopAll(){
   audioEpoch++;
+  stopOpeningMusic();
   for(const key of Object.keys(activeSounds))stopSound(key);
   for(const a of Object.values(fallbackAudio)){
     try{a.pause();a.currentTime=0}catch(e){}
@@ -383,6 +472,7 @@ function preloadAudio(){
   ensureAudioContext().then(ctx=>{
     if(!ctx)return;
     for(const key of Object.keys(AUDIO_FILES))loadAudioBuffer(key);
+    maybeStartOpeningMusic();
   });
 }
 
@@ -395,6 +485,7 @@ function toggleMusicMute(){
   musicMuted=!musicMuted;
   syncAudioGains();
   saveAudioPrefs();
+  if(!musicMuted)maybeStartOpeningMusic();
 }
 async function toggleMusicMuteFromButton(){
   musicMuted=!musicMuted;
@@ -454,8 +545,8 @@ function closeSettingsV2(){
   }
   settingsPausedMsV2=null;
 }
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800)} function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')} function home(){clearTimer();stopAll();show('home')} function goSetup(){clearTimer();stopAll();show('setup');play('transition')} function resetForm(){document.getElementById('t1').value='الفريق الأحمر';document.getElementById('t2').value='الفريق الأزرق';document.getElementById('a1').value=0;document.getElementById('a2').value=2;document.getElementById('rounds').value=10}
-function haptic(kind='light'){try{if(window.webkit?.messageHandlers?.haptics)window.webkit.messageHandlers.haptics.postMessage(kind);else if(navigator.vibrate)navigator.vibrate(kind==='success'?[30,40,30]:kind==='error'?[60]:20)}catch(e){}} function goCategories(){saveLastSetup();clearTimer();stopAll();show('categories');syncAll();play('transition')} function pickCat(el){stopAll();el.classList.toggle('selected');haptic('light');syncAll();play('transition')} function toggleAll(){stopAll();let els=[...document.querySelectorAll('.cat')],all=els.every(x=>x.classList.contains('selected'));els.forEach(x=>x.classList.toggle('selected',!all));haptic('light');syncAll();play('transition')} function syncAll(){let els=[...document.querySelectorAll('.cat')],n=els.filter(x=>x.classList.contains('selected')).length;document.getElementById('allBtn').textContent=els.every(x=>x.classList.contains('selected'))?'إلغاء اختيار الكل':'اختيار الكل';const sc=document.getElementById('selectionCount');if(sc)sc.textContent=n+' محددة'}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800)} function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')} function home(){clearTimer();stopAll();show('home');maybeStartOpeningMusic()} function goSetup(){clearTimer();stopAll();show('setup');maybeStartOpeningMusic();play('transition')} function resetForm(){document.getElementById('t1').value='الفريق الأحمر';document.getElementById('t2').value='الفريق الأزرق';document.getElementById('a1').value=0;document.getElementById('a2').value=2;document.getElementById('rounds').value=10}
+function haptic(kind='light'){try{if(window.webkit?.messageHandlers?.haptics)window.webkit.messageHandlers.haptics.postMessage(kind);else if(navigator.vibrate)navigator.vibrate(kind==='success'?[30,40,30]:kind==='error'?[60]:20)}catch(e){}} function goCategories(){saveLastSetup();clearTimer();stopAll();show('categories');syncAll();maybeStartOpeningMusic();play('transition')} function pickCat(el){stopAll();el.classList.toggle('selected');haptic('light');syncAll();play('transition')} function toggleAll(){stopAll();let els=[...document.querySelectorAll('.cat')],all=els.every(x=>x.classList.contains('selected'));els.forEach(x=>x.classList.toggle('selected',!all));haptic('light');syncAll();play('transition')} function syncAll(){let els=[...document.querySelectorAll('.cat')],n=els.filter(x=>x.classList.contains('selected')).length;document.getElementById('allBtn').textContent=els.every(x=>x.classList.contains('selected'))?'إلغاء اختيار الكل':'اختيار الكل';const sc=document.getElementById('selectionCount');if(sc)sc.textContent=n+' محددة'}
 const SOURCE_REGISTRY={
   cia_factbook:{name:'CIA World Factbook',url:'https://www.cia.gov/the-world-factbook/countries/'},
   restcountries:{name:'REST Countries reference dataset',url:'https://restcountries.com/docs/countries'},
