@@ -281,7 +281,7 @@ function syncAudioGains(){
 
   const musicBtn=document.getElementById('musicMuteBtn');
   if(musicBtn){
-    musicBtn.textContent=musicMuted?'🔇':'🎵';
+    musicBtn.textContent=musicMuted?'🎵✕':'🎵';
     musicBtn.classList.toggle('muted',musicMuted);
     musicBtn.setAttribute('aria-pressed',musicMuted?'true':'false');
     musicBtn.setAttribute('aria-label',musicMuted?'تشغيل الموسيقى':'كتم الموسيقى');
