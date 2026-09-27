@@ -98,6 +98,42 @@
   .score{padding:3px}
   .nav .btn{min-height:33px;padding:6px}
 }
+
+/* Final mobile-fit pass */
+@media(max-width:600px){
+  html,body{height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important}
+  body{min-height:100dvh!important}
+  .app{height:auto!important;min-height:100dvh!important;overflow:visible!important;display:block!important;padding:max(8px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom))!important}
+  .screen.active{display:block!important;overflow:visible!important}
+  .top{min-height:42px!important;margin-bottom:6px!important}
+  .topAudioActions{flex-shrink:0}
+  .settingsTopBtn{white-space:nowrap}
+  #game.screen.active{height:calc(100dvh - 58px)!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+  #game .gameMeta,#game .progressWrap,#game .questionCard,#game .lifelineRow,#game .helpUsedBanner,#game .choices,#game #revealBtn,#game .answer,#game .resultBtns,#game .scoreline,#game>.nav{flex-shrink:0}
+  #game .questionCard{padding:7px!important}
+  #game .timer{font-size:36px!important;line-height:1!important;margin:2px 0!important}
+  #game .question{font-size:17px!important;line-height:1.25!important;min-height:44px!important}
+  #game .flagStage{min-height:70px!important;font-size:58px!important;margin:2px 0 3px!important}
+  #game .lifelineRow{margin:3px 0!important}
+  #game .helpBtn,#game #revealBtn,#game .resultBtns .btn{min-height:34px!important;padding:6px 8px!important;margin:2px 0!important;font-size:13px!important}
+  #game .choices{gap:4px!important;margin:3px 0!important}
+  #game .choice{min-height:34px!important;padding:6px 8px!important;font-size:13px!important}
+  #game .answer{padding:6px!important;margin:3px 0!important;font-size:15px!important}
+  #game .scoreline{margin:3px 0!important}
+  #game .score{padding:4px!important}
+  #game .score b{font-size:17px!important}
+  #game>.nav{margin-top:2px!important}
+  #game>.nav .btn{min-height:32px!important;padding:5px 6px!important;font-size:12px!important;margin:1px 0!important}
+}
+@media(max-width:390px) and (max-height:700px){
+  #game .questionCard{padding:5px!important}
+  #game .timer{font-size:31px!important}
+  #game .question{font-size:15px!important;min-height:38px!important}
+  #game .flagStage{min-height:60px!important;font-size:50px!important}
+  #game .badge{padding:4px 6px!important;font-size:10px!important}
+  #game .turnPill{margin:2px auto!important;padding:3px 6px!important}
+  #game .score b{font-size:15px!important}
+}
 </style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><div class="topAudioActions"><button id="musicMuteBtn" class="musicMuteTopBtn" type="button" aria-label="كتم أو تشغيل الموسيقى" title="كتم/تشغيل الموسيقى">🎵</button><button id="settingsBtnV2" class="settingsTopBtn" type="button" aria-label="فتح الإعدادات">⚙️ الإعدادات</button></div></div>
 <div id="settingsModalV2" class="settingsModalV2 hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitleV2">
   <div class="settingsBackdropV2" data-close-settings="true"></div>
@@ -110,17 +146,9 @@
       <button id="settingsCloseV2" class="settingsCloseV2" type="button" aria-label="إغلاق الإعدادات">×</button>
     </div>
 
-    <div class="settingsMasterV2">
-      <div>
-        <b>تشغيل الأصوات</b>
-        <span>كتم أو تشغيل كل أصوات اللعبة</span>
-      </div>
-      <button id="soundBtn" class="masterSoundBtnV2" type="button" aria-label="كتم أو تشغيل كل الأصوات">🔊</button>
-    </div>
-
     <div class="settingSliderV2 masterLevelSettingV2">
       <div class="settingSliderHeadV2">
-        <label for="musicVolume">🔊 مستوى الصوت</label>
+        <label for="musicVolume">🔊 مستوى الصوت العام</label>
         <output id="musicVolumeValue" for="musicVolume">70%</output>
       </div>
       <input id="musicVolume" class="volumeSliderV2" type="range" min="0" max="100" step="1" value="70">
@@ -161,6 +189,7 @@ const MUSIC_KEYS=new Set(['thinking','setup']);
 const BASE_AUDIO_VOLUME={thinking:.55,setup:.75,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.9,win1:.9,win2:.9,transition:.9};
 let sound=true;
 let musicMuted=false;
+let pausedMusicState={};
 let musicVolume=.80;
 let effectsVolume=.80;
 let audioCtx=null,musicGain=null,effectsGain=null,audioGraphReady=false;
@@ -185,19 +214,18 @@ function effectiveVolume(key){
   return (BASE_AUDIO_VOLUME[key]??1)*channel;
 }
 function ensureAudioGraph(){
-  if(audioGraphReady){
-    if(audioCtx?.state==='suspended')audioCtx.resume().catch(()=>{});
-    return true;
-  }
   const AC=window.AudioContext||window.webkitAudioContext;
   if(!AC)return false;
   try{
-    audioCtx=new AC();
-    musicGain=audioCtx.createGain();
-    effectsGain=audioCtx.createGain();
-    musicGain.connect(audioCtx.destination);
-    effectsGain.connect(audioCtx.destination);
+    if(!audioCtx){
+      audioCtx=new AC();
+      musicGain=audioCtx.createGain();
+      effectsGain=audioCtx.createGain();
+      musicGain.connect(audioCtx.destination);
+      effectsGain.connect(audioCtx.destination);
+    }
     for(const [key,a] of Object.entries(A)){
+      if(trackGains[key])continue;
       const source=audioCtx.createMediaElementSource(a);
       const track=audioCtx.createGain();
       track.gain.value=BASE_AUDIO_VOLUME[key]??1;
@@ -206,12 +234,11 @@ function ensureAudioGraph(){
       trackGains[key]=track;
       a.volume=1;
     }
-    audioGraphReady=true;
+    audioGraphReady=Object.keys(trackGains).length===Object.keys(A).length;
     applyAudioVolumes();
     if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
-    return true;
+    return audioGraphReady;
   }catch(e){
-    audioGraphReady=false;
     return false;
   }
 }
@@ -234,8 +261,6 @@ function applyAudioVolumes(){
   const levelOut=document.getElementById('musicVolumeValue');
   if(level){level.value=Math.round(musicVolume*100);level.disabled=false}
   if(levelOut)levelOut.textContent=Math.round(musicVolume*100)+'%';
-  const mute=document.getElementById('soundBtn');
-  if(mute){mute.textContent=sound?'🔊':'🔇';mute.setAttribute('aria-pressed',sound?'false':'true')}
   const musicMute=document.getElementById('musicMuteBtn');
   if(musicMute){
     musicMute.textContent=musicMuted?'🎵✕':'🎵';
@@ -252,6 +277,7 @@ applyAudioVolumes();
 function stopAll(){Object.values(A).forEach(a=>{a.pause();a.currentTime=0})}
 function play(k,loop=false){
   if(!sound)return;
+  if(MUSIC_KEYS.has(k)&&musicMuted)return;
   ensureAudioGraph();
   if(audioCtx?.state==='suspended')audioCtx.resume().catch(()=>{});
   const a=A[k];
@@ -260,13 +286,6 @@ function play(k,loop=false){
   if(!audioGraphReady)a.volume=Math.max(0,Math.min(1,effectiveVolume(k)));
   const p=a.play();if(p)p.catch(()=>{});
 }
-document.getElementById('soundBtn').onclick=()=>{
-  ensureAudioGraph();
-  sound=!sound;
-  if(!sound)stopAll();
-  applyAudioVolumes();
-  saveAudioSettings();
-};
 document.getElementById('settingsBtnV2').onclick=()=>{
   ensureAudioGraph();
   openSettingsV2();
@@ -279,12 +298,32 @@ document.getElementById('musicVolume').addEventListener('input',e=>{
   const level=Math.max(0,Math.min(1,+e.target.value/100));
   musicVolume=level;
   effectsVolume=level;
-  if(!sound&&level>0)sound=true;
+  sound=true;
   applyAudioVolumes();saveAudioSettings();
 });
+function pauseMusicTracks(){
+  pausedMusicState={};
+  for(const key of MUSIC_KEYS){
+    const a=A[key];
+    if(!a)continue;
+    pausedMusicState[key]={wasPlaying:!a.paused,time:a.currentTime,loop:a.loop};
+    if(!a.paused)a.pause();
+  }
+}
+function resumeMusicTracks(){
+  for(const key of MUSIC_KEYS){
+    const state=pausedMusicState[key],a=A[key];
+    if(!state||!state.wasPlaying||!a)continue;
+    a.currentTime=state.time||0;
+    a.loop=!!state.loop;
+    const p=a.play();if(p)p.catch(()=>{});
+  }
+  pausedMusicState={};
+}
 document.getElementById('musicMuteBtn').onclick=()=>{
   ensureAudioGraph();
   musicMuted=!musicMuted;
+  if(musicMuted)pauseMusicTracks();else resumeMusicTracks();
   applyAudioVolumes();
   saveAudioSettings();
 };
