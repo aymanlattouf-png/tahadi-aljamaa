@@ -134,25 +134,56 @@
   #game .turnPill{margin:2px auto!important;padding:3px 6px!important}
   #game .score b{font-size:15px!important}
 }
-</style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><div class="topAudioActions"><button id="musicMuteBtn" class="musicMuteTopBtn" type="button" aria-label="كتم أو تشغيل الموسيقى" title="كتم/تشغيل الموسيقى">🎵</button><button id="settingsBtnV2" class="settingsTopBtn" type="button" aria-label="فتح الإعدادات">⚙️ الإعدادات</button></div></div>
-<div id="settingsModalV2" class="settingsModalV2 hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitleV2">
-  <div class="settingsBackdropV2" data-close-settings="true"></div>
-  <div class="settingsCardV2">
-    <div class="settingsHeadV2">
+
+/* Audio controls v3 — rebuilt from scratch */
+.audioTopControls{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.audioTopBtn,.audioSettingsBtn{border:1px solid #ffffff24;background:#ffffff14;color:#fff;min-height:44px;border-radius:999px;font-weight:900;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.audioTopBtn{width:44px;padding:0;font-size:19px;display:grid;place-items:center}
+.audioTopBtn.muted{background:#ef444422;border-color:#ef444466}
+.audioSettingsBtn{padding:0 14px;font-size:14px}
+.audioSettingsModal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.audioSettingsModal.hidden{display:none!important}
+.audioSettingsBackdrop{position:absolute;inset:0;background:#020617dc;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.audioSettingsCard{position:relative;width:min(460px,100%);background:#0b1629;border:1px solid #ffffff24;border-radius:24px;padding:18px;box-shadow:0 24px 70px #0009}
+.audioSettingsHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.audioSettingsKicker{font-size:12px;color:#fbbf24;font-weight:900}
+.audioSettingsHeader h2{font-size:25px;margin:4px 0 0}
+.audioSettingsClose{width:44px;height:44px;border:0;border-radius:14px;background:#ffffff12;color:#fff;font-size:27px}
+.audioVolumeBlock{padding:15px;border:1px solid #ffffff16;background:#ffffff08;border-radius:18px;margin-bottom:14px}
+.audioVolumeHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.audioVolumeHead label{font-size:16px;font-weight:900}
+.audioVolumeHead output{font-weight:1000;color:#fde68a;font-variant-numeric:tabular-nums}
+.audioVolumeRange{width:100%;direction:ltr;-webkit-appearance:none;appearance:none;background:transparent;min-height:44px;touch-action:pan-y}
+.audioVolumeRange::-webkit-slider-runnable-track{height:9px;border-radius:999px;background:#334155}
+.audioVolumeRange::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid #fbbf24;margin-top:-9.5px;box-shadow:0 2px 8px #0007}
+.audioVolumeRange::-moz-range-track{height:9px;border-radius:999px;background:#334155}
+.audioVolumeRange::-moz-range-progress{height:9px;border-radius:999px;background:#fbbf24}
+.audioVolumeRange::-moz-range-thumb{width:23px;height:23px;border-radius:50%;background:#fff;border:4px solid #fbbf24}
+.audioVolumeEnds{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:-2px}
+@media(max-width:430px){
+  .audioSettingsBtn{font-size:12px;padding:0 11px;min-height:40px}
+  .audioTopBtn{width:40px;min-height:40px;font-size:18px}
+  .audioSettingsCard{padding:15px;border-radius:20px}
+}
+</style></head><body><div class="app"><div class="top"><div class="brand">تحدّي الجَمعة 🔥</div><div class="audioTopControls"><button id="musicMuteBtn" class="audioTopBtn" type="button" aria-label="كتم الموسيقى" aria-pressed="false" title="كتم الموسيقى">🎵</button><button id="settingsBtnV2" class="audioSettingsBtn" type="button" aria-label="فتح الإعدادات">⚙️ الإعدادات</button></div></div>
+<div id="settingsModalV2" class="audioSettingsModal hidden" role="dialog" aria-modal="true" aria-labelledby="audioSettingsTitle">
+  <div class="audioSettingsBackdrop" data-close-settings="true"></div>
+  <div class="audioSettingsCard">
+    <div class="audioSettingsHeader">
       <div>
-        <div class="settingsEyebrowV2">⚙️ الإعدادات</div>
-        <h2 id="settingsTitleV2">الصوت والموسيقى</h2>
+        <span class="audioSettingsKicker">⚙️ الإعدادات</span>
+        <h2 id="audioSettingsTitle">الصوت</h2>
       </div>
-      <button id="settingsCloseV2" class="settingsCloseV2" type="button" aria-label="إغلاق الإعدادات">×</button>
+      <button id="settingsCloseV2" class="audioSettingsClose" type="button" aria-label="إغلاق الإعدادات">×</button>
     </div>
 
-    <div class="settingSliderV2 masterLevelSettingV2">
-      <div class="settingSliderHeadV2">
-        <label for="musicVolume">🔊 مستوى الصوت العام</label>
-        <output id="musicVolumeValue" for="musicVolume">70%</output>
+    <div class="audioVolumeBlock">
+      <div class="audioVolumeHead">
+        <label for="masterVolume">🔊 مستوى الصوت</label>
+        <output id="masterVolumeValue" for="masterVolume">80%</output>
       </div>
-      <input id="musicVolume" class="volumeSliderV2" type="range" min="0" max="100" step="1" value="70">
-      <div class="sliderEndsV2"><span>0%</span><span>100%</span></div>
+      <input id="masterVolume" class="audioVolumeRange" type="range" min="0" max="100" step="1" value="80" aria-label="مستوى الصوت">
+      <div class="audioVolumeEnds"><span>0</span><span>100</span></div>
     </div>
 
     <button id="settingsDoneV2" class="btn" type="button">تم</button>
@@ -172,163 +203,226 @@ function loadLastSetup(){try{const x=JSON.parse(localStorage.getItem(SETUP_KEY)|
 function saveLastSetup(){try{localStorage.setItem(SETUP_KEY,JSON.stringify({t1:document.getElementById('t1').value.trim(),t2:document.getElementById('t2').value.trim(),a1:+document.getElementById('a1').value,a2:+document.getElementById('a2').value,rounds:+document.getElementById('rounds').value}))}catch(e){}}
 loadLastSetup();
 const catsEl=document.getElementById('cats'); catsEl.innerHTML=CAT.map(c=>`<button class="cat" data-cat="${c[0]}" onclick="pickCat(this)"><span class="ico">${c[2]}</span>${c[1]}</button>`).join('');
-const A={
-  thinking:new Audio('assets/thinking.wav'),
-  setup:new Audio('assets/setup.wav'),
-  countdown:new Audio('assets/countdown.wav'),
-  correct:new Audio('assets/correct.wav'),
-  wrong1:new Audio('assets/wrong1.wav'),
-  wrong2:new Audio('assets/wrong2.wav'),
-  timeup:new Audio('assets/timeup.wav'),
-  win1:new Audio('assets/win1.wav'),
-  win2:new Audio('assets/win2.wav'),
-  transition:new Audio('assets/transition.wav')
+const AUDIO_FILES={
+  thinking:'assets/thinking.wav',
+  setup:'assets/setup.wav',
+  countdown:'assets/countdown.wav',
+  correct:'assets/correct.wav',
+  wrong1:'assets/wrong1.wav',
+  wrong2:'assets/wrong2.wav',
+  timeup:'assets/timeup.wav',
+  win1:'assets/win1.wav',
+  win2:'assets/win2.wav',
+  transition:'assets/transition.wav'
 };
-const AUDIO_SETTINGS_KEY='tahadi_audio_settings_v2';
 const MUSIC_KEYS=new Set(['thinking','setup']);
-const BASE_AUDIO_VOLUME={thinking:.55,setup:.75,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.9,win1:.9,win2:.9,transition:.9};
-let sound=true;
-let musicMuted=false;
-let pausedMusicState={};
-let musicVolume=.80;
-let effectsVolume=.80;
-let audioCtx=null,musicGain=null,effectsGain=null,audioGraphReady=false;
-const trackGains={};
+const AUDIO_BASE_GAIN={thinking:.58,setup:.72,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.95,win1:.9,win2:.9,transition:.82};
+const AUDIO_PREFS_KEY='tahadi_audio_v3';
 
-function loadAudioSettings(){
+let masterVolume=.80;
+let musicMuted=false;
+let audioCtx=null;
+let masterBus=null;
+let musicBus=null;
+let effectsBus=null;
+let audioEpoch=0;
+const audioBuffers={};
+const audioLoads={};
+const activeSounds={};
+const fallbackAudio={};
+
+function clamp01(v){return Math.max(0,Math.min(1,Number(v)||0))}
+
+function loadAudioPrefs(){
   try{
-    const saved=JSON.parse(localStorage.getItem(AUDIO_SETTINGS_KEY)||localStorage.getItem('tahadi_audio_settings_v1')||'{}');
-    if(typeof saved.sound==='boolean')sound=saved.sound;
-    if(typeof saved.musicMuted==='boolean')musicMuted=saved.musicMuted;
-    const unified=Number.isFinite(saved.masterVolume)?saved.masterVolume:(Number.isFinite(saved.musicVolume)?saved.musicVolume:(Number.isFinite(saved.effectsVolume)?saved.effectsVolume:null));
-    if(Number.isFinite(unified)){musicVolume=Math.max(0,Math.min(1,unified));effectsVolume=musicVolume;}
+    const p=JSON.parse(localStorage.getItem(AUDIO_PREFS_KEY)||'{}');
+    if(Number.isFinite(p.masterVolume))masterVolume=clamp01(p.masterVolume);
+    if(typeof p.musicMuted==='boolean')musicMuted=p.musicMuted;
   }catch(e){}
 }
-function saveAudioSettings(){
-  try{localStorage.setItem(AUDIO_SETTINGS_KEY,JSON.stringify({sound,musicMuted,masterVolume:musicVolume,musicVolume,effectsVolume}))}catch(e){}
+function saveAudioPrefs(){
+  try{localStorage.setItem(AUDIO_PREFS_KEY,JSON.stringify({masterVolume,musicMuted}))}catch(e){}
 }
-function effectiveVolume(key){
-  const channel=MUSIC_KEYS.has(key)?musicVolume:effectsVolume;
-  if(!sound)return 0;
-  if(MUSIC_KEYS.has(key)&&musicMuted)return 0;
-  return (BASE_AUDIO_VOLUME[key]??1)*channel;
-}
-function ensureAudioGraph(){
-  const AC=window.AudioContext||window.webkitAudioContext;
-  if(!AC)return false;
-  try{
-    if(!audioCtx){
+function audioContextCtor(){return window.AudioContext||window.webkitAudioContext||null}
+
+async function ensureAudioContext(){
+  const AC=audioContextCtor();
+  if(!AC)return null;
+  if(!audioCtx){
+    try{
       audioCtx=new AC();
-      musicGain=audioCtx.createGain();
-      effectsGain=audioCtx.createGain();
-      musicGain.connect(audioCtx.destination);
-      effectsGain.connect(audioCtx.destination);
+      masterBus=audioCtx.createGain();
+      musicBus=audioCtx.createGain();
+      effectsBus=audioCtx.createGain();
+      musicBus.connect(masterBus);
+      effectsBus.connect(masterBus);
+      masterBus.connect(audioCtx.destination);
+      syncAudioGains();
+    }catch(e){
+      audioCtx=null;masterBus=null;musicBus=null;effectsBus=null;
+      return null;
     }
-    for(const [key,a] of Object.entries(A)){
-      if(trackGains[key])continue;
-      const source=audioCtx.createMediaElementSource(a);
-      const track=audioCtx.createGain();
-      track.gain.value=BASE_AUDIO_VOLUME[key]??1;
-      source.connect(track);
-      track.connect(MUSIC_KEYS.has(key)?musicGain:effectsGain);
-      trackGains[key]=track;
-      a.volume=1;
-    }
-    audioGraphReady=Object.keys(trackGains).length===Object.keys(A).length;
-    applyAudioVolumes();
-    if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
-    return audioGraphReady;
-  }catch(e){
-    return false;
   }
+  if(audioCtx.state==='suspended'){
+    try{await audioCtx.resume()}catch(e){}
+  }
+  return audioCtx;
 }
-function applyAudioVolumes(){
-  const master=sound?1:0;
-  if(audioGraphReady&&musicGain&&effectsGain){
-    const now=audioCtx?.currentTime||0;
-    musicGain.gain.cancelScheduledValues(now);
-    effectsGain.gain.cancelScheduledValues(now);
-    musicGain.gain.setValueAtTime(master*(musicMuted?0:musicVolume),now);
-    effectsGain.gain.setValueAtTime(master*effectsVolume,now);
-    for(const [key,track] of Object.entries(trackGains)){
-      track.gain.setValueAtTime(BASE_AUDIO_VOLUME[key]??1,now);
-    }
-  }else{
-    for(const [key,a] of Object.entries(A))a.volume=Math.max(0,Math.min(1,effectiveVolume(key)));
+
+function syncAudioGains(){
+  if(masterBus)masterBus.gain.value=masterVolume;
+  if(musicBus)musicBus.gain.value=musicMuted?0:1;
+  if(effectsBus)effectsBus.gain.value=1;
+
+  const slider=document.getElementById('masterVolume');
+  const value=document.getElementById('masterVolumeValue');
+  if(slider)slider.value=String(Math.round(masterVolume*100));
+  if(value)value.textContent=Math.round(masterVolume*100)+'%';
+
+  const musicBtn=document.getElementById('musicMuteBtn');
+  if(musicBtn){
+    musicBtn.textContent=musicMuted?'🔇':'🎵';
+    musicBtn.classList.toggle('muted',musicMuted);
+    musicBtn.setAttribute('aria-pressed',musicMuted?'true':'false');
+    musicBtn.setAttribute('aria-label',musicMuted?'تشغيل الموسيقى':'كتم الموسيقى');
+    musicBtn.title=musicMuted?'تشغيل الموسيقى':'كتم الموسيقى';
   }
 
-  const level=document.getElementById('musicVolume');
-  const levelOut=document.getElementById('musicVolumeValue');
-  if(level){level.value=Math.round(musicVolume*100);level.disabled=false}
-  if(levelOut)levelOut.textContent=Math.round(musicVolume*100)+'%';
-  const musicMute=document.getElementById('musicMuteBtn');
-  if(musicMute){
-    musicMute.textContent=musicMuted?'🎵✕':'🎵';
-    musicMute.classList.toggle('muted',musicMuted);
-    musicMute.setAttribute('aria-pressed',musicMuted?'true':'false');
-    musicMute.title=musicMuted?'تشغيل الموسيقى':'كتم الموسيقى';
+  // Fallback path for browsers without Web Audio.
+  for(const [key,a] of Object.entries(fallbackAudio)){
+    const musicFactor=MUSIC_KEYS.has(key)&&musicMuted?0:1;
+    a.volume=clamp01(masterVolume*(AUDIO_BASE_GAIN[key]??1)*musicFactor);
   }
 }
-Object.values(A).forEach(a=>{a.preload='auto'});
-A.thinking.loop=true;
-loadAudioSettings();
-applyAudioVolumes();
 
-function stopAll(){Object.values(A).forEach(a=>{a.pause();a.currentTime=0})}
-function play(k,loop=false){
-  if(!sound)return;
-  if(MUSIC_KEYS.has(k)&&musicMuted)return;
-  ensureAudioGraph();
-  if(audioCtx?.state==='suspended')audioCtx.resume().catch(()=>{});
-  const a=A[k];
-  if(!a)return;
-  a.pause();a.currentTime=0;a.loop=loop;
-  if(!audioGraphReady)a.volume=Math.max(0,Math.min(1,effectiveVolume(k)));
+async function loadAudioBuffer(key){
+  if(audioBuffers[key])return audioBuffers[key];
+  if(audioLoads[key])return audioLoads[key];
+  const ctx=await ensureAudioContext();
+  if(!ctx)return null;
+  audioLoads[key]=(async()=>{
+    try{
+      const res=await fetch(AUDIO_FILES[key],{cache:'force-cache'});
+      if(!res.ok)throw new Error('audio fetch failed');
+      const data=await res.arrayBuffer();
+      const buffer=await ctx.decodeAudioData(data.slice(0));
+      audioBuffers[key]=buffer;
+      return buffer;
+    }catch(e){
+      return null;
+    }finally{
+      delete audioLoads[key];
+    }
+  })();
+  return audioLoads[key];
+}
+
+function stopSound(key){
+  const item=activeSounds[key];
+  if(item){
+    try{item.source.onended=null;item.source.stop()}catch(e){}
+    try{item.source.disconnect()}catch(e){}
+    try{item.gain.disconnect()}catch(e){}
+    delete activeSounds[key];
+  }
+  const fallback=fallbackAudio[key];
+  if(fallback){
+    try{fallback.pause();fallback.currentTime=0}catch(e){}
+  }
+}
+function stopAll(){
+  audioEpoch++;
+  for(const key of Object.keys(activeSounds))stopSound(key);
+  for(const a of Object.values(fallbackAudio)){
+    try{a.pause();a.currentTime=0}catch(e){}
+  }
+}
+
+function playFallback(key,loop=false){
+  let a=fallbackAudio[key];
+  if(!a){
+    a=new Audio(AUDIO_FILES[key]);
+    a.preload='auto';
+    fallbackAudio[key]=a;
+  }
+  stopSound(key);
+  a=fallbackAudio[key]||a;
+  a.loop=!!loop;
+  const musicFactor=MUSIC_KEYS.has(key)&&musicMuted?0:1;
+  a.volume=clamp01(masterVolume*(AUDIO_BASE_GAIN[key]??1)*musicFactor);
+  try{a.currentTime=0}catch(e){}
   const p=a.play();if(p)p.catch(()=>{});
 }
-document.getElementById('settingsBtnV2').onclick=()=>{
-  ensureAudioGraph();
-  openSettingsV2();
-};
-document.getElementById('settingsCloseV2').onclick=closeSettingsV2;
-document.getElementById('settingsDoneV2').onclick=closeSettingsV2;
-document.querySelector('[data-close-settings="true"]').onclick=closeSettingsV2;
-document.getElementById('musicVolume').addEventListener('input',e=>{
-  ensureAudioGraph();
-  const level=Math.max(0,Math.min(1,+e.target.value/100));
-  musicVolume=level;
-  effectsVolume=level;
-  sound=true;
-  applyAudioVolumes();saveAudioSettings();
-});
-function pauseMusicTracks(){
-  pausedMusicState={};
-  for(const key of MUSIC_KEYS){
-    const a=A[key];
-    if(!a)continue;
-    pausedMusicState[key]={wasPlaying:!a.paused,time:a.currentTime,loop:a.loop};
-    if(!a.paused)a.pause();
-  }
-}
-function resumeMusicTracks(){
-  for(const key of MUSIC_KEYS){
-    const state=pausedMusicState[key],a=A[key];
-    if(!state||!state.wasPlaying||!a)continue;
-    a.currentTime=state.time||0;
-    a.loop=!!state.loop;
-    const p=a.play();if(p)p.catch(()=>{});
-  }
-  pausedMusicState={};
-}
-document.getElementById('musicMuteBtn').onclick=()=>{
-  ensureAudioGraph();
-  musicMuted=!musicMuted;
-  if(musicMuted)pauseMusicTracks();else resumeMusicTracks();
-  applyAudioVolumes();
-  saveAudioSettings();
-};
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('settingsModalV2').classList.contains('hidden'))closeSettingsV2()});
+async function play(key,loop=false){
+  if(!AUDIO_FILES[key])return;
+  const requestEpoch=audioEpoch;
+  const ctx=await ensureAudioContext();
+  if(!ctx){playFallback(key,loop);return}
+
+  const buffer=await loadAudioBuffer(key);
+  if(!buffer||requestEpoch!==audioEpoch)return;
+
+  stopSound(key);
+  const source=ctx.createBufferSource();
+  const gain=ctx.createGain();
+  source.buffer=buffer;
+  source.loop=!!loop;
+  gain.gain.value=AUDIO_BASE_GAIN[key]??1;
+  source.connect(gain);
+  gain.connect(MUSIC_KEYS.has(key)?musicBus:effectsBus);
+  activeSounds[key]={source,gain};
+  source.onended=()=>{
+    if(activeSounds[key]?.source===source)delete activeSounds[key];
+    try{source.disconnect();gain.disconnect()}catch(e){}
+  };
+  try{source.start(0)}catch(e){}
+}
+
+function preloadAudio(){
+  ensureAudioContext().then(ctx=>{
+    if(!ctx)return;
+    for(const key of Object.keys(AUDIO_FILES))loadAudioBuffer(key);
+  });
+}
+
+function setMasterVolume(value){
+  masterVolume=clamp01(value);
+  syncAudioGains();
+  saveAudioPrefs();
+}
+function toggleMusicMute(){
+  musicMuted=!musicMuted;
+  syncAudioGains();
+  saveAudioPrefs();
+}
+
+loadAudioPrefs();
+syncAudioGains();
+
+// First real touch unlocks iOS audio and starts preloading.
+document.addEventListener('pointerdown',preloadAudio,{once:true,passive:true});
+document.addEventListener('touchstart',preloadAudio,{once:true,passive:true});
+
+document.getElementById('settingsBtnV2').addEventListener('click',()=>{
+  preloadAudio();
+  openSettingsV2();
+});
+document.getElementById('settingsCloseV2').addEventListener('click',closeSettingsV2);
+document.getElementById('settingsDoneV2').addEventListener('click',closeSettingsV2);
+document.querySelector('[data-close-settings="true"]').addEventListener('click',closeSettingsV2);
+document.getElementById('musicMuteBtn').addEventListener('click',()=>{
+  preloadAudio();
+  toggleMusicMute();
+});
+document.getElementById('masterVolume').addEventListener('input',e=>{
+  preloadAudio();
+  setMasterVolume(Number(e.target.value)/100);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!document.getElementById('settingsModalV2').classList.contains('hidden'))closeSettingsV2();
+});
+
 const POINTS={1:100,2:200,3:300,4:400,5:500}; let st={teams:[],rounds:10,selected:[],turn:0,qnum:0,scores:[0,0],current:null,used:new Set(),usedTopics:new Set(),usedTypes:[],catCounts:{},categoryQueue:[],lastCategory:null,timer:null,deadline:0,countdownStarted:false,helpUsed:[false,false]};
 let settingsPausedMsV2=null;
 function openSettingsV2(){
@@ -1270,7 +1364,7 @@ function selectChoice(btn,answer){
   setTimeout(nextTurn,1300);
 }
 function startTimer(seconds=15){clearTimer();const duration=Math.max(1,Math.min(15,Number(seconds)||15));st.deadline=Date.now()+duration*1000;st.countdownStarted=duration<=9;document.getElementById('timer').textContent=String(Math.ceil(duration));if(duration>9)play('thinking',true);else play('countdown');st.timer=setInterval(tick,100);tick()}
-function tick(){let ms=st.deadline-Date.now();if(ms<=0){document.getElementById('timer').textContent='0';clearTimer();stopAll();play('timeup');haptic('error');reveal(true);return}let sec=Math.ceil(ms/1000);document.getElementById('timer').textContent=sec;if(sec<=9&&!st.countdownStarted){st.countdownStarted=true;A.thinking.pause();A.thinking.currentTime=0;play('countdown')}}
+function tick(){let ms=st.deadline-Date.now();if(ms<=0){document.getElementById('timer').textContent='0';clearTimer();stopAll();play('timeup');haptic('error');reveal(true);return}let sec=Math.ceil(ms/1000);document.getElementById('timer').textContent=sec;if(sec<=9&&!st.countdownStarted){st.countdownStarted=true;stopSound('thinking');play('countdown')}}
 function clearTimer(){if(st.timer){clearInterval(st.timer);st.timer=null}}
 function reveal(fromTimeout=false){clearTimer();if(!fromTimeout)stopAll();document.getElementById('answerBox').classList.remove('hidden');document.getElementById('resultBtns').classList.remove('hidden');document.getElementById('revealBtn').classList.add('hidden')}
 function mark(ok){stopAll();if(ok){st.scores[st.turn]+=POINTS[st.current.level]||100;play('correct');haptic('success')}else{play(Math.random()<.5?'wrong1':'wrong2');haptic('error')}updateScores();setTimeout(nextTurn,700)}
