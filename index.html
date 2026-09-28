@@ -402,7 +402,7 @@ async function startOpeningMusic(){
 }
 function maybeStartOpeningMusic(){
   const active=document.querySelector('.screen.active')?.id;
-  if(active==='home')startOpeningMusic();
+  if(['home','setup','categories'].includes(active))startOpeningMusic();
   else stopOpeningMusic();
 }
 
@@ -497,7 +497,7 @@ async function toggleMusicMuteFromButton(){
   }else{
     await ensureAudioContext();
     const activeScreen=document.querySelector('.screen.active')?.id;
-    if(activeScreen==='home'){
+    if(['home','setup','categories'].includes(activeScreen)){
       startOpeningMusic();
     }else if(activeScreen==='game'){
       const remaining=st?.deadline?Math.ceil((st.deadline-Date.now())/1000):0;
@@ -551,8 +551,8 @@ function closeSettingsV2(){
   }
   settingsPausedMsV2=null;
 }
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800)} function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')} function home(){clearTimer();stopAll();show('home');maybeStartOpeningMusic()} function goSetup(){clearTimer();stopAll();show('setup');play('transition')} function resetForm(){document.getElementById('t1').value='الفريق الأحمر';document.getElementById('t2').value='الفريق الأزرق';document.getElementById('a1').value=0;document.getElementById('a2').value=2;document.getElementById('rounds').value=10}
-function haptic(kind='light'){try{if(window.webkit?.messageHandlers?.haptics)window.webkit.messageHandlers.haptics.postMessage(kind);else if(navigator.vibrate)navigator.vibrate(kind==='success'?[30,40,30]:kind==='error'?[60]:20)}catch(e){}} function goCategories(){saveLastSetup();clearTimer();stopAll();show('categories');syncAll();play('transition')} function pickCat(el){stopAll();el.classList.toggle('selected');haptic('light');syncAll();play('transition')} function toggleAll(){stopAll();let els=[...document.querySelectorAll('.cat')],all=els.every(x=>x.classList.contains('selected'));els.forEach(x=>x.classList.toggle('selected',!all));haptic('light');syncAll();play('transition')} function syncAll(){let els=[...document.querySelectorAll('.cat')],n=els.filter(x=>x.classList.contains('selected')).length;document.getElementById('allBtn').textContent=els.every(x=>x.classList.contains('selected'))?'إلغاء اختيار الكل':'اختيار الكل';const sc=document.getElementById('selectionCount');if(sc)sc.textContent=n+' محددة'}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800)} function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')} function home(){clearTimer();stopAll();show('home');maybeStartOpeningMusic()} function goSetup(){clearTimer();show('setup');maybeStartOpeningMusic()} function resetForm(){document.getElementById('t1').value='الفريق الأحمر';document.getElementById('t2').value='الفريق الأزرق';document.getElementById('a1').value=0;document.getElementById('a2').value=2;document.getElementById('rounds').value=10}
+function haptic(kind='light'){try{if(window.webkit?.messageHandlers?.haptics)window.webkit.messageHandlers.haptics.postMessage(kind);else if(navigator.vibrate)navigator.vibrate(kind==='success'?[30,40,30]:kind==='error'?[60]:20)}catch(e){}} function goCategories(){saveLastSetup();clearTimer();show('categories');syncAll();maybeStartOpeningMusic()} function pickCat(el){el.classList.toggle('selected');haptic('light');syncAll()} function toggleAll(){let els=[...document.querySelectorAll('.cat')],all=els.every(x=>x.classList.contains('selected'));els.forEach(x=>x.classList.toggle('selected',!all));haptic('light');syncAll()} function syncAll(){let els=[...document.querySelectorAll('.cat')],n=els.filter(x=>x.classList.contains('selected')).length;document.getElementById('allBtn').textContent=els.every(x=>x.classList.contains('selected'))?'إلغاء اختيار الكل':'اختيار الكل';const sc=document.getElementById('selectionCount');if(sc)sc.textContent=n+' محددة'}
 const SOURCE_REGISTRY={
   cia_factbook:{name:'CIA World Factbook',url:'https://www.cia.gov/the-world-factbook/countries/'},
   restcountries:{name:'REST Countries reference dataset',url:'https://restcountries.com/docs/countries'},
