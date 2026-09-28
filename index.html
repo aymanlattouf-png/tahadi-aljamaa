@@ -181,9 +181,9 @@
     <div class="audioVolumeBlock">
       <div class="audioVolumeHead">
         <label for="masterVolume">🔊 مستوى الصوت</label>
-        <output id="masterVolumeValue" for="masterVolume">80%</output>
+        <output id="masterVolumeValue" for="masterVolume">100%</output>
       </div>
-      <input id="masterVolume" class="audioVolumeRange" type="range" min="0" max="100" step="1" value="80" aria-label="مستوى الصوت">
+      <input id="masterVolume" class="audioVolumeRange" type="range" min="0" max="100" step="1" value="100" aria-label="مستوى الصوت">
       <div class="audioVolumeEnds"><span>0</span><span>100</span></div>
     </div>
 
@@ -220,7 +220,7 @@ const MUSIC_KEYS=new Set(['thinking','setup','transition']);
 const AUDIO_BASE_GAIN={thinking:.58,setup:.72,countdown:1,correct:.9,wrong1:.9,wrong2:.9,timeup:.95,win1:.9,win2:.9,transition:.52};
 const AUDIO_PREFS_KEY='tahadi_audio_v3';
 
-let masterVolume=.80;
+let masterVolume=1;
 let musicMuted=false;
 let audioCtx=null;
 let masterBus=null;
