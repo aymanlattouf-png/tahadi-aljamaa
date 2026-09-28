@@ -652,7 +652,7 @@ addMany('general',[
 ['ما العنصر الذي رمزه Au؟','الذهب',3,2,4,'gold_symbol','science'],
 ['أي كوكب يشتهر بحلقاته الواضحة؟','زحل',3,1,3,'saturn','science'],
 ['ما عاصمة أستراليا؟','كانبرا',3,1,4,'australia_capital','capital'],
-['ما أصغر عظمة في جسم الإنسان؟','عظمة الركاب في الأذن',4,2,4,'stapes','body'],
+['ما أصغر عظمة في جسم الإنسان؟','عظمة الركاب',4,2,4,'stapes','body'],
 ['أي كوكب يدور تقريبًا على جانبه؟','أورانوس',4,2,4,'uranus','science'],
 ['ما الوحدة الأساسية لقياس شدة التيار الكهربائي؟','الأمبير',4,2,4,'ampere','science'],
 ['ما اسم أكبر قمر لكوكب زحل؟','تيتان',5,3,4,'titan','science'],
@@ -1412,6 +1412,55 @@ function isChoiceCompatible(q){
          !String(q.a).startsWith('أي ') && !String(q.a).startsWith('مثل:');
 }
 function shuffled(arr){return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1])}
+
+function normalizeChoiceText(value){
+  return String(value??'')
+    .normalize('NFKD')
+    .replace(/[\u064B-\u065F\u0670\u0640]/g,'')
+    .replace(/[إأآٱ]/g,'ا')
+    .replace(/ى/g,'ي')
+    .replace(/ة/g,'ه')
+    .replace(/رضي الله عنه|رضي الله عنها|رضي الله عنهما|عليه السلام|صلي الله عليه وسلم/g,'')
+    .replace(/[()（）\[\]{}«»"'.,،؛:!?؟ـ/\\-]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLowerCase();
+}
+const CHOICE_GENERIC_WORDS=new Set(['سوره','غزوه','مدينه','عاصمه','دوله','عظمه','جبل','نهر','بحر','محيط','كوكب','عام','السنه','سنه','مسجد','الصحابي','الصحابيه','نحو','تقريبا']);
+function choiceTokens(value){
+  return normalizeChoiceText(value).split(' ').filter(Boolean).filter(w=>!CHOICE_GENERIC_WORDS.has(w));
+}
+function diceSimilarity(a,b){
+  const A=normalizeChoiceText(a).replace(/\s+/g,''),B=normalizeChoiceText(b).replace(/\s+/g,'');
+  if(A===B)return 1;
+  if(A.length<2||B.length<2)return 0;
+  const grams=s=>{const out=[];for(let i=0;i<s.length-1;i++)out.push(s.slice(i,i+2));return out};
+  const ga=grams(A),gb=grams(B),used=new Array(gb.length).fill(false);
+  let hit=0;
+  for(const g of ga){const j=gb.findIndex((x,i)=>!used[i]&&x===g);if(j>=0){used[j]=true;hit++}}
+  return 2*hit/(ga.length+gb.length);
+}
+function choicesTooSimilar(a,b){
+  const A=normalizeChoiceText(a),B=normalizeChoiceText(b);
+  if(!A||!B)return true;
+  if(A===B)return true;
+
+  // Never show one answer as a longer version of another.
+  const short=A.length<=B.length?A:B,long=A.length<=B.length?B:A;
+  if(short.length>=4&&long.includes(short))return true;
+
+  const ta=choiceTokens(a),tb=choiceTokens(b);
+  if(ta.length&&tb.length){
+    const Bset=new Set(tb),common=ta.filter(x=>Bset.has(x)).length;
+    const containment=common/Math.min(ta.length,tb.length);
+    const union=new Set([...ta,...tb]).size;
+    const jaccard=common/Math.max(1,union);
+    if(containment>=.75)return true;
+    if(jaccard>=.62)return true;
+  }
+
+  return diceSimilarity(a,b)>=.78;
+}
 function numericChoices(q){
   const m=String(q.a).trim().match(/^(-?\d+(?:\.\d+)?)(.*)$/);
   if(!m)return null;
@@ -1421,13 +1470,37 @@ function numericChoices(q){
   return shuffled(vals.slice(0,3).map(v=>String(v)+suffix));
 }
 function makeOptions(q){
-  const nums=numericChoices(q);if(nums)return nums;
-  let pool=Q.filter(x=>x.id!==q.id&&x.cat===q.cat&&x.type===q.type&&Math.abs(x.level-q.level)<=0&&x.a!==q.a);
-  if(pool.length<2) pool=Q.filter(x=>x.id!==q.id&&x.cat===q.cat&&Math.abs(x.level-q.level)<=1&&x.a!==q.a);
+  const nums=numericChoices(q);
+  if(nums)return nums;
+
+  const tiers=[
+    x=>x.cat===q.cat&&x.type===q.type&&x.level===q.level,
+    x=>x.cat===q.cat&&x.type===q.type&&Math.abs(x.level-q.level)<=1,
+    x=>x.cat===q.cat&&Math.abs(x.level-q.level)<=1,
+    x=>x.cat===q.cat
+  ];
+
   const distractors=[];
-  for(const x of shuffled(pool)){if(!distractors.includes(x.a)){distractors.push(x.a);if(distractors.length===2)break}}
+  const seen=new Set([normalizeChoiceText(q.a)]);
+  for(const tier of tiers){
+    const pool=shuffled(Q.filter(x=>x.id!==q.id&&tier(x)&&x.a!==q.a));
+    for(const x of pool){
+      const answer=String(x.a);
+      const norm=normalizeChoiceText(answer);
+      if(!norm||seen.has(norm))continue;
+      if(choicesTooSimilar(q.a,answer))continue;
+      if(distractors.some(d=>choicesTooSimilar(d,answer)))continue;
+      seen.add(norm);
+      distractors.push(answer);
+      if(distractors.length===2)break;
+    }
+    if(distractors.length===2)break;
+  }
+
   if(distractors.length<2)return null;
-  return shuffled([q.a,...distractors]);
+  const options=[q.a,...distractors];
+  if(options.some((a,i)=>options.some((b,j)=>i<j&&choicesTooSimilar(a,b))))return null;
+  return shuffled(options);
 }
 function useLifeline(){
   if(st.helpUsed[st.turn]){toast('استخدم هذا الفريق مساعدته بالفعل');return}
