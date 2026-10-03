@@ -11,6 +11,11 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Select submission-compatible Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          xcodebuild -version
+          python3 -c 'import subprocess; v=subprocess.check_output(["xcodebuild","-sdk","iphoneos","-version","SDKVersion"],text=True).strip(); assert int(v.split(".")[0]) >= 26, v'
       - name: Prepare project
         run: |
           brew install xcodegen

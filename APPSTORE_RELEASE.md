@@ -66,3 +66,6 @@ App Privacy المقترح للكود الحالي: لا إرسال لبيانا
 - https://developer.apple.com/app-store/review/guidelines/
 - https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/
 - https://developer.apple.com/news/upcoming-requirements/
+
+## نتائج التحقق — ٤ أكتوبر ٢٠٢٦
+نجح فحص ١٠٥ تركيبات اختيار أسئلة واختبارات حد الصعوبة والتسجيل المكرر للنقاط. نجح بناء المحاكي الأول باستخدام Xcode 16.4. تم تعديل فحص البناء لاستخدام Xcode 26.3 وSDK 26+ المطلوبين للنشر؛ يجب أن ينجح الفحص الجديد قبل الاعتماد. نجاح البناء ليس تشغيلًا على جهاز أو تجربة TestFlight.
