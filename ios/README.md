@@ -1,33 +1,18 @@
-# تحدّي الجَمعة — iOS
+# iOS — تحدّي الجَمعة
+SwiftUI + WKWebView, bundled offline game and audio, native haptics, local settings, privacy/support pages and approved icon. iOS 16+, iPhone/iPad.
 
-هذا المجلد يحتوي نسخة iOS أصلية خفيفة تستخدم SwiftUI + WKWebView وتحمّل اللعبة وملفات الصوت من داخل التطبيق، لذلك تعمل اللعبة دون اتصال بعد التثبيت.
+## Build on a compatible Mac
+```sh
+brew install xcodegen
+python3 ios/prepare_web.py
+cd ios
+xcodegen generate
+open TahadiAlJamaa.xcodeproj
+```
+Select your Apple Developer Team in Signing & Capabilities. Confirm/register the bundle identifier (currently com.tahadi.aljamaa). Run on iPhone/iPad, then Product → Archive → Distribute App → App Store Connect.
 
-## توليد مشروع Xcode
+The preparation script stages current game files into ios/Web and embeds audio in a JS resource to avoid fetching file URLs for Web Audio. Xcode's pre-build script refreshes these resources. Generated Web and xcodeproj files are ignored by git.
 
-1. ثبّت Xcode و XcodeGen.
-2. من Terminal:
-   ```bash
-   cd ios
-   xcodegen generate
-   open TahadiAlJamaa.xcodeproj
-   ```
-3. داخل Xcode اختر Apple Development Team.
-4. غيّر Bundle Identifier قبل إنشاء سجل App Store إذا تم اعتماد اسم الشركة.
-5. أضف App Icon النهائي بعد اعتماد هوية شركة الألعاب.
-6. شغّل على iPhone حقيقي ثم Archive > Distribute App > App Store Connect.
+GitHub CI generates the project and builds for simulator without signing. Simulator builds cannot be uploaded to TestFlight. CI success does not prove device/audio/distribution behavior. Use an Xcode/iOS SDK accepted by Apple's current submission requirements; do not assume the user's older Mac supports it.
 
-## الموجود جاهز
-- iOS 16+
-- Offline bundled HTML/audio
-- Native haptics للجمع/الخطأ/الاختيار
-- LocalStorage لحفظ إعدادات وسجل الأسئلة
-- Privacy manifest
-- Safe-area mobile UI
-- دعم iPhone و iPad
-
-## المتبقي قبل الرفع
-- Apple Developer Team / signing
-- App Icon النهائي 1024×1024
-- اسم الشركة وهوية الناشر النهائية
-- لقطات App Store
-- إنشاء App record في App Store Connect
+No enrolled Apple account, Team ID, signing, IPA or TestFlight upload exists yet. New support email is pending.

@@ -13,13 +13,21 @@ targets:
     platform: iOS
     sources:
       - path: TahadiAlJamaa
-    resources:
-      - path: ../index.html
-      - path: ../assets
+        excludes:
+          - Info.plist
+      - path: Web
+        type: folder
+        buildPhase: resources
+    preBuildScripts:
+      - name: Refresh offline game content
+        script: python3 "$SRCROOT/prepare_web.py"
+        basedOnDependencyAnalysis: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tahadi.aljamaa
-        PRODUCT_NAME: "تحدي الجمعة"
+        PRODUCT_NAME: TahadiAlJamaa
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
         MARKETING_VERSION: 1.0.0
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic

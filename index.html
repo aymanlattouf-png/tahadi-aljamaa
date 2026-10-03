@@ -187,11 +187,12 @@
       <div class="audioVolumeEnds"><span>0</span><span>100</span></div>
     </div>
 
+    <p class="micro center"><a href="privacy.html" style="color:#cbd5e1">الخصوصية</a> • <a href="support.html" style="color:#cbd5e1">المساعدة والدعم</a></p>
     <button id="settingsDoneV2" class="btn" type="button">تم</button>
   </div>
 </div>
 <section id="home" class="screen active"><div class="hero"><div class="heroMark">🔥</div><span class="eyebrow">لعبة جماعية عربية</span><h1>تحدّي الجَمعة</h1><p>أسئلة على قدّ أعماركم، منافسة سريعة، وضحك أكثر.</p></div><button class="btn" onclick="goSetup()">ابدأ التحدّي</button><button class="btn secondary homeSettingsBtn" type="button" onclick="openSettingsV2()">⚙️ الإعدادات</button><p class="micro center">فريقان • 15 ثانية لكل سؤال • من دون تسجيل</p></section>
-<section id="setup" class="screen"><div class="stepper"><span class="stepDot active"></span><span class="stepDot"></span></div><div class="panel"><h2 class="setupTitle">جهّز الفريقين</h2><p class="setupSub">اختر الفئة العمرية لكل فريق حتى تكون الأسئلة مناسبة فعلًا لمستواهم.</p><div class="row setupTeams"><div class="teamCard red"><div class="teamTag">🔴 الفريق الأحمر</div><div class="field"><label for="t1">اسم الفريق</label><input id="t1" value="الفريق الأحمر" autocomplete="off"></div><div class="field"><label for="a1">الفئة العمرية</label><select id="a1"></select><small>تُختار الأسئلة وفق هذه الفئة العمرية، وليست الأسئلة نفسها للجميع.</small></div></div><div class="teamCard blue"><div class="teamTag">🔵 الفريق الأزرق</div><div class="field"><label for="t2">اسم الفريق</label><input id="t2" value="الفريق الأزرق" autocomplete="off"></div><div class="field"><label for="a2">الفئة العمرية</label><select id="a2"></select><small>يمكن اختيار عمر مختلف لكل فريق.</small></div></div></div><div class="field"><label for="rounds">عدد الأسئلة في التحدّي</label><select id="rounds"><option>6</option><option selected>10</option><option>14</option></select></div><button class="btn" onclick="goCategories()">اختيار الفئات</button></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="resetForm()">↻ إعادة الإعداد</button></div></section>
+<section id="setup" class="screen"><div class="stepper"><span class="stepDot active"></span><span class="stepDot"></span></div><div class="panel"><h2 class="setupTitle">جهّز الفريقين</h2><p class="setupSub">اختر الفئة العمرية لكل فريق حتى تكون الأسئلة مناسبة فعلًا لمستواهم.</p><div class="row setupTeams"><div class="teamCard red"><div class="teamTag">🔴 الفريق الأحمر</div><div class="field"><label for="t1">اسم الفريق</label><input id="t1" maxlength="30" value="الفريق الأحمر" autocomplete="off"></div><div class="field"><label for="a1">الفئة العمرية</label><select id="a1"></select><small>تُختار الأسئلة وفق هذه الفئة العمرية، وليست الأسئلة نفسها للجميع.</small></div></div><div class="teamCard blue"><div class="teamTag">🔵 الفريق الأزرق</div><div class="field"><label for="t2">اسم الفريق</label><input id="t2" maxlength="30" value="الفريق الأزرق" autocomplete="off"></div><div class="field"><label for="a2">الفئة العمرية</label><select id="a2"></select><small>يمكن اختيار عمر مختلف لكل فريق.</small></div></div></div><div class="field"><label for="rounds">عدد الأسئلة في التحدّي</label><select id="rounds"><option>6</option><option selected>10</option><option>14</option></select></div><button class="btn" onclick="goCategories()">اختيار الفئات</button></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="resetForm()">↻ إعادة الإعداد</button></div></section>
 <section id="categories" class="screen"><div class="stepper"><span class="stepDot"></span><span class="stepDot active"></span></div><div class="sectionHead"><div><h2>اختر الفئات</h2><div class="small">اختر فئة أو أكثر. عند اختيار عدة فئات، يظهر سؤال من كل فئة قبل بدء دورة جديدة.</div></div><div id="selectionCount" class="selectionCount">0 محددة</div></div><div id="cats" class="cats"></div><button id="allBtn" class="btn secondary" onclick="toggleAll()">اختيار الكل</button><button class="btn" onclick="startChallenge()">ابدأ التحدّي 🔥</button><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="show('setup')">رجوع</button></div></section>
 <section id="turnIntro" class="screen"><div class="panel center" style="margin-top:22vh;padding:38px 18px"><div style="font-size:18px;color:var(--muted);font-weight:800">الدور الآن:</div><div id="turnIntroTeam" class="readyTeam"></div></div></section>
 <section id="game" class="screen"><div class="gameMeta"><span id="qIndex" class="qIndex"></span><span id="difficulty" class="difficulty"></span></div><div class="progressWrap"><div id="progressBar" class="progressBar"></div></div><div class="questionCard"><div class="qhead"><span id="turnBadge" class="badge"></span><span id="catBadge" class="badge"></span></div><div class="turnPill" id="ageHint"></div><div id="timer" class="timer">15</div><div id="flagStage" class="flagStage hidden"></div><div id="question" class="question"></div></div><div id="lifelineRow" class="lifelineRow"><button id="helpBtn" class="btn helpBtn" onclick="useLifeline()">🛟 مساعدة: 3 خيارات</button><span id="helpStatus" class="helpStatus"></span></div><div id="helpUsedBanner" class="helpUsedBanner hidden"><div class="helpUsedIcon">🛟</div><div class="helpUsedText"><b>تم استخدام المساعدة</b><span>اختر الإجابة الصحيحة من بين 3 خيارات</span></div></div><div id="choices" class="choices hidden"></div><button id="revealBtn" class="btn" onclick="reveal()">إظهار الإجابة</button><div id="answerBox" class="answer hidden"></div><div id="resultBtns" class="resultBtns hidden"><button class="btn correct" onclick="mark(true)">✓ صحيحة</button><button class="btn wrong" onclick="mark(false)">✕ خاطئة</button></div><div class="scoreline"><div class="score team1"><span id="s1n"></span><b id="s1">0</b></div><div class="score team2"><span id="s2n"></span><b id="s2">0</b></div></div><div class="nav"><button class="btn secondary" onclick="home()">🏠 الرئيسية</button><button class="btn secondary" onclick="restartSame()">🔄 تحدّي جديد</button></div></section>
@@ -303,9 +304,15 @@ async function loadAudioBuffer(key){
   if(!ctx)return null;
   audioLoads[key]=(async()=>{
     try{
-      const res=await fetch(AUDIO_FILES[key],{cache:'force-cache'});
-      if(!res.ok)throw new Error('audio fetch failed');
-      const data=await res.arrayBuffer();
+      let data;
+      if(window.__BUNDLED_AUDIO__?.[key]){
+        const bytes=Uint8Array.from(atob(window.__BUNDLED_AUDIO__[key]),c=>c.charCodeAt(0));
+        data=bytes.buffer;
+      }else{
+        const res=await fetch(AUDIO_FILES[key],{cache:'force-cache'});
+        if(!res.ok)throw new Error('audio fetch failed');
+        data=await res.arrayBuffer();
+      }
       const buffer=await ctx.decodeAudioData(data.slice(0));
       audioBuffers[key]=buffer;
       return buffer;
@@ -1311,6 +1318,12 @@ function getQuestion(){
   if(!eligible.length)eligible=Q.filter(q=>q.cat===targetCat&&q.minAge<=age&&q.maxAge>=age);
   if(!eligible.length)throw new Error('لا توجد أسئلة مناسبة لهذه الفئة العمرية في فئة '+(CAT.find(x=>x[0]===targetCat)?.[1]||targetCat));
 
+  // The 25+ cap applies before history/type preferences and every fallback.
+  if(age===4&&st.veryHard25Used){
+    eligible=eligible.filter(q=>q.level<5);
+    if(!eligible.length)eligible=Q.filter(q=>q.cat===targetCat&&questionFits(q,age)&&q.level<5);
+    if(!eligible.length)throw new Error('لا توجد أسئلة مناسبة متبقية في هذه الفئة');
+  }
   const unseen=eligible.filter(q=>!h[q.id]);
   let pool=unseen.length?unseen:eligible;
 
@@ -1404,6 +1417,7 @@ function updateHelpUI(){
   if(banner)banner.classList.toggle('hidden',!used);
 }
 function beginQuestion(){
+  st.answered=false;
   stopAll();
   try{st.current=getQuestion()}catch(e){toast(e.message||'لا توجد أسئلة مناسبة');backToCategories();return}
   document.getElementById('turnBadge').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;
@@ -1537,7 +1551,8 @@ function useLifeline(){
   box.classList.remove('hidden');
 }
 function selectChoice(btn,answer){
-  if(btn.disabled)return;
+  if(btn.disabled||st.answered)return;
+  st.answered=true;
   clearTimer();stopAll();
   const buttons=[...document.querySelectorAll('#choices .choice')];
   buttons.forEach(b=>b.disabled=true);
@@ -1563,9 +1578,10 @@ function startTimer(seconds=15){clearTimer();const duration=Math.max(1,Math.min(
 function tick(){let ms=st.deadline-Date.now();if(ms<=0){document.getElementById('timer').textContent='0';clearTimer();stopAll();play('timeup');haptic('error');reveal(true);return}let sec=Math.ceil(ms/1000);document.getElementById('timer').textContent=sec;if(sec<=9&&!st.countdownStarted){st.countdownStarted=true;stopSound('thinking');play('countdown')}}
 function clearTimer(){if(st.timer){clearInterval(st.timer);st.timer=null}}
 function reveal(fromTimeout=false){clearTimer();if(!fromTimeout)stopAll();document.getElementById('answerBox').classList.remove('hidden');document.getElementById('resultBtns').classList.remove('hidden');document.getElementById('revealBtn').classList.add('hidden')}
-function mark(ok){stopAll();if(ok){st.scores[st.turn]+=POINTS[st.current.level]||100;play('correct');haptic('success')}else{play(Math.random()<.5?'wrong1':'wrong2');haptic('error')}updateScores();setTimeout(nextTurn,700)}
+function mark(ok){if(st.answered)return;st.answered=true;stopAll();if(ok){st.scores[st.turn]+=POINTS[st.current.level]||100;play('correct');haptic('success')}else{play(Math.random()<.5?'wrong1':'wrong2');haptic('error')}updateScores();setTimeout(nextTurn,700)}
 function nextTurn(){st.qnum++;if(st.qnum>=st.rounds){finish();return}st.turn=1-st.turn;showTurnIntro()}
 function updateScores(){if(!st.teams.length)return;document.getElementById('s1n').textContent='🔴 '+st.teams[0].name;document.getElementById('s2n').textContent='🔵 '+st.teams[1].name;document.getElementById('s1').textContent=st.scores[0];document.getElementById('s2').textContent=st.scores[1]}
-function finish(){clearTimer();stopAll();const a=st.scores[0],b=st.scores[1];let title,details;if(a===b){title='تعادل 🤝';details=`${st.teams[0].name}: ${a} نقطة<br>${st.teams[1].name}: ${b} نقطة`;}else{const wi=a>b?0:1,li=1-wi;title=`🏆 الفائز: ${(wi===0?'🔴 ':'🔵 ')+st.teams[wi].name}`;details=`الفائز — ${(wi===0?'🔴 ':'🔵 ')+st.teams[wi].name}: ${st.scores[wi]} نقطة<br>الخاسر — ${(li===0?'🔴 ':'🔵 ')+st.teams[li].name}: ${st.scores[li]} نقطة`;}document.getElementById('winner').textContent=title;document.getElementById('finalScore').innerHTML=details;show('finish');play(Math.random()<.5?'win1':'win2')} function backToCategories(){clearTimer();stopAll();show('categories');play('transition')}
-function restartSame(){clearTimer();stopAll();if(!st.teams.length){show('home');return}st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};st.categoryQueue=[];st.lastCategory=null;updateScores();beginQuestion()}
+function escapeHTML(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function finish(){clearTimer();stopAll();const a=st.scores[0],b=st.scores[1];let title,details;if(a===b){title='تعادل 🤝';details=`${escapeHTML(st.teams[0].name)}: ${a} نقطة<br>${escapeHTML(st.teams[1].name)}: ${b} نقطة`;}else{const wi=a>b?0:1,li=1-wi;title=`🏆 الفائز: ${(wi===0?'🔴 ':'🔵 ')+st.teams[wi].name}`;details=`الفائز — ${(wi===0?'🔴 ':'🔵 ')+escapeHTML(st.teams[wi].name)}: ${st.scores[wi]} نقطة<br>الخاسر — ${(li===0?'🔴 ':'🔵 ')+escapeHTML(st.teams[li].name)}: ${st.scores[li]} نقطة`;}document.getElementById('winner').textContent=title;document.getElementById('finalScore').innerHTML=details;show('finish');play(Math.random()<.5?'win1':'win2')} function backToCategories(){clearTimer();stopAll();show('categories');play('transition')}
+function restartSame(){clearTimer();stopAll();st.veryHard25Used=false;if(!st.teams.length){show('home');return}st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};st.categoryQueue=[];st.lastCategory=null;updateScores();beginQuestion()}
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script></body></html>

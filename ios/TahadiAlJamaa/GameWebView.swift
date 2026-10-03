@@ -21,7 +21,7 @@ struct GameWebView: UIViewRepresentable {
         webView.isOpaque = false
         webView.backgroundColor = UIColor(red: 15/255, green: 23/255, blue: 42/255, alpha: 1)
 
-        guard let indexURL = Bundle.main.url(forResource: "index", withExtension: "html") else {
+        guard let indexURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "Web") else {
             assertionFailure("index.html is missing from the app bundle")
             return webView
         }

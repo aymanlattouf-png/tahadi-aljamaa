@@ -1,0 +1,31 @@
+name: iOS simulator build
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['ios/**', 'index.html', 'assets/**', 'privacy.html', 'support.html', '.github/workflows/ios-build.yml']
+permissions:
+  contents: read
+jobs:
+  simulator:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare project
+        run: |
+          brew install xcodegen
+          python3 ios/prepare_web.py
+          cd ios
+          xcodegen generate
+          xcodebuild -version
+      - name: Build for simulator without signing
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/TahadiAlJamaa.xcodeproj -scheme TahadiAlJamaa -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build | tee ios/build.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-simulator-build
+          path: |
+            ios/build.log
+            ios/build/Build/Products/Release-iphonesimulator/TahadiAlJamaa.app
