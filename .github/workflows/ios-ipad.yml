@@ -1,0 +1,49 @@
+name: iPad screenshot check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ios-ipad.yml']
+permissions:
+  contents: read
+jobs:
+  simulator:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select submission-compatible Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          xcodebuild -version
+          python3 -c 'import subprocess; v=subprocess.check_output(["xcodebuild","-sdk","iphoneos","-version","SDKVersion"],text=True).strip(); assert int(v.split(".")[0]) >= 26, v'
+      - name: Prepare project
+        run: |
+          brew install xcodegen
+          python3 ios/prepare_web.py
+          cd ios
+          xcodegen generate
+          xcodebuild -version
+      - name: Build for simulator without signing
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/TahadiAlJamaa.xcodeproj -scheme TahadiAlJamaa -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build | tee ios/build.log
+      - name: Capture real iPad simulator screens
+        run: |
+          set -o pipefail
+          simulator_id=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); phones=[v for vs in d["devices"].values() for v in vs if v["isAvailable"] and "iPad Pro" in v["name"] and "13-inch" in v["name"]]; assert phones; print(phones[-1]["udid"])')
+          xcodebuild -project ios/TahadiAlJamaa.xcodeproj -scheme TahadiAlJamaa -destination "platform=iOS Simulator,id=$simulator_id" -derivedDataPath ios/build -resultBundlePath ios/screenshots.xcresult CODE_SIGNING_ALLOWED=NO test | tee ios/screenshots.log
+          xcrun xcresulttool export attachments --path ios/screenshots.xcresult --output-path ios/store-screenshots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ipad-screenshot-test
+          path: |
+            ios/store-screenshots
+            ios/screenshots.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ipad-simulator-build
+          path: |
+            ios/build.log
+            ios/build/Build/Products/Release-iphonesimulator/TahadiAlJamaa.app
