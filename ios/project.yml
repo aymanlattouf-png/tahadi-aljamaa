@@ -34,4 +34,17 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         INFOPLIST_FILE: TahadiAlJamaa/Info.plist
     scheme:
-      testTargets: []
+      testTargets:
+        - TahadiAlJamaaUITests
+  TahadiAlJamaaUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: UITests
+    dependencies:
+      - target: TahadiAlJamaa
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.tahadi.aljamaa.uitests
+        TEST_TARGET_NAME: TahadiAlJamaa
