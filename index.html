@@ -531,7 +531,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!document.getElementById('settingsModalV2').classList.contains('hidden'))closeSettingsV2();
 });
 
-const POINTS={1:100,2:200,3:300,4:400,5:500}; let st={teams:[],rounds:10,selected:[],turn:0,qnum:0,scores:[0,0],current:null,used:new Set(),usedTopics:new Set(),usedTypes:[],catCounts:{},categoryQueue:[],lastCategory:null,timer:null,deadline:0,countdownStarted:false,helpUsed:[false,false]};
+const POINTS={1:100,2:200,3:300,4:400,5:500}; let st={teams:[],rounds:10,selected:[],turn:0,qnum:0,scores:[0,0],current:null,used:new Set(),usedTopics:new Set(),usedTypes:[],catCounts:{},categoryQueue:[],lastCategory:null,timer:null,deadline:0,countdownStarted:false,helpUsed:[false,false],veryHard25Used:false};
 let settingsPausedMsV2=null;
 function openSettingsV2(){
   settingsPausedMsV2=null;
@@ -1265,7 +1265,7 @@ function auditArabicText(){
   return report;
 }
 auditArabicText();
-function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختر فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};st.categoryQueue=[];st.lastCategory=null;updateScores();beginQuestion()}
+function startChallenge(){let selected=[...document.querySelectorAll('.cat.selected')].map(x=>x.dataset.cat);if(!selected.length){toast('اختر فئة واحدة على الأقل');return}stopAll();st.teams=[{name:document.getElementById('t1').value.trim()||'الفريق الأحمر',age:+document.getElementById('a1').value},{name:document.getElementById('t2').value.trim()||'الفريق الأزرق',age:+document.getElementById('a2').value}];st.rounds=+document.getElementById('rounds').value;st.selected=selected;st.turn=0;st.qnum=0;st.scores=[0,0];st.helpUsed=[false,false];st.veryHard25Used=false;st.used=new Set();st.usedTopics=new Set();st.usedTypes=[];st.catCounts={};st.categoryQueue=[];st.lastCategory=null;updateScores();beginQuestion()}
 function showTurnIntro(){clearTimer();stopAll();document.getElementById('turnIntroTeam').textContent=(st.turn===0?'🔴 ':'🔵 ')+st.teams[st.turn].name;show('turnIntro');play('transition');setTimeout(()=>{if(document.getElementById('turnIntro').classList.contains('active'))beginQuestion()},3000)}
 const HISTORY_KEY='tahadi_question_history_v2';
 function loadHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}')}catch(e){return {}}}
@@ -1318,10 +1318,24 @@ function getQuestion(){
   const varied=pool.filter(q=>!recentTypes.has(q.type));
   if(varied.length>=2)pool=varied;
 
-  if(age===4){const easier=pool.filter(q=>q.level<=4);if(easier.length&&Math.random()<0.8)pool=easier}
-  const target=AGE_TARGET_LEVELS[age]??(AGE_LEVELS[age]||[1,3])[1];
-  const close=pool.filter(q=>Math.abs(q.level-target)<=1);
-  if(close.length)pool=close;
+  if(age===4){
+    // 25+: keep the game challenging but fun. Most questions are level 3–4,
+    // with at most one level-5 question in the whole challenge.
+    const normal=pool.filter(q=>q.level===3||q.level===4);
+    const veryHard=pool.filter(q=>q.level===5);
+    if(!st.veryHard25Used&&veryHard.length&&Math.random()<0.20){
+      pool=veryHard;
+    }else if(normal.length){
+      const level3=normal.filter(q=>q.level===3);
+      const level4=normal.filter(q=>q.level===4);
+      const preferred=Math.random()<0.35?level3:level4;
+      pool=preferred.length?preferred:normal;
+    }
+  }else{
+    const target=AGE_TARGET_LEVELS[age]??(AGE_LEVELS[age]||[1,3])[1];
+    const close=pool.filter(q=>Math.abs(q.level-target)<=1);
+    if(close.length)pool=close;
+  }
 
   let q;
   const fresh=pool.filter(x=>!h[x.id]);
@@ -1332,6 +1346,7 @@ function getQuestion(){
     q=oldestPool[Math.floor(Math.random()*oldestPool.length)];
   }
 
+  if(age===4&&q.level===5)st.veryHard25Used=true;
   st.used.add(q.id);
   st.usedTopics.add(q.topicId);
   st.usedTypes.push(q.type);
