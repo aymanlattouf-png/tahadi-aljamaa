@@ -38,7 +38,7 @@ Arabic local party trivia game for two teams sharing one device. No account or l
 - Support: https://aymanlattouf-png.github.io/tahadi-aljamaa/support.html
 
 ## صور المتجر
-معاينات المتصفح للتخطيط؛ يجب استبدالها بلقطات تطبيق iOS المبني قبل تقديمها إلى Apple. لا تقدمها كصور iPhone.
+تم التقاط خمس صور أصلية من تطبيق iOS على محاكي iPhone 16 Pro Max (1320×2868)، وخمس صور على محاكي iPad Pro 13-inch M4 (2064×2752). الصور في الحزمة المسلّمة Tahadi_AppStore_Screenshots.zip. معاينات appstore/previews القديمة من المتصفح للتخطيط فقط. عند تغيير الواجهة أو الإصدار النهائي، حدّث اللقطات لتطابقه.
 
 | الترتيب | العنوان | الشاشة |
 |---|---|---|
@@ -51,7 +51,7 @@ Arabic local party trivia game for two teams sharing one device. No account or l
 ## الجاهزية
 تم تجهيز الأيقونة ١٠٢٤×١٠٢٤ للمشروع، المحتوى المحلي والصوتيات للبناء، الخصوصية والدعم وروابطهما، نصوص المتجر وخطة TestFlight وإصلاحات اختيار الصعوبة والنقاط.
 
-معلّق: البريد الجديد الذي طلبه المستخدم، اسم الناشر القانوني، التسجيل في Apple Developer (المستخدم لم يسجل بعد)، Team ID وSigning، بناء واختبار iOS، الصور النهائية، TestFlight والإرسال.
+معلّق: البريد الجديد الذي طلبه المستخدم، اسم الناشر القانوني، التسجيل في Apple Developer (المستخدم لم يسجل بعد)، Team ID وSigning، توقيع نسخة التوزيع، اختبار الأجهزة الحقيقية والصوت والعمل Offline، تجربة المستخدمين عبر TestFlight والإرسال.
 
 Bundle ID بالمصدر: `com.tahadi.aljamaa`؛ لم يسجل في حساب Apple ولم يتحقق من توفره. NAWA FUNLAB علامة مقترحة سابقًا، وليست اسم ناشر قانوني مثبتًا. Copyright وSKU وReview Contact تملأ عند اعتماد الحساب والجهة.
 
@@ -68,4 +68,7 @@ App Privacy المقترح للكود الحالي: لا إرسال لبيانا
 - https://developer.apple.com/news/upcoming-requirements/
 
 ## نتائج التحقق — ٤ أكتوبر ٢٠٢٦
-نجح فحص ١٠٥ تركيبات اختيار أسئلة واختبارات حد الصعوبة والتسجيل المكرر للنقاط. نجح بناء المحاكي الأول باستخدام Xcode 16.4. تم تعديل فحص البناء لاستخدام Xcode 26.3 وSDK 26+ المطلوبين للنشر؛ يجب أن ينجح الفحص الجديد قبل الاعتماد. نجاح البناء ليس تشغيلًا على جهاز أو تجربة TestFlight.
+نجح البناء باستخدام Xcode 26.3 وSDK 26.2. نجح اختبار الواجهة الأولي على محاكيات iPhone وiPad مع التقاط خمس شاشات لكل جهاز. نجح فحص ١٠٥ تركيبات لاختيار الأسئلة وجولات كاملة ٦ و١٠ و١٤ سؤالًا بالنقاط والنتيجة، واختبارات حد الصعوبة ومنع النقر المكرر للنقاط. الفحص البنيوي شمل ٥٠٠ سؤال؛ لم يُجر تدقيق حقائق جديد لكل إجابة. لم تختبر اللعبة على جهاز حقيقي ولم تُرفع إلى TestFlight.
+
+- iPhone build and UI test: https://github.com/aymanlattouf-png/tahadi-aljamaa/actions/runs/37159485526
+- iPad build and UI test: https://github.com/aymanlattouf-png/tahadi-aljamaa/actions/runs/37159928076

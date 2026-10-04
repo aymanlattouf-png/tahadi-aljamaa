@@ -13,3 +13,11 @@ assert.equal(vm.runInContext(`(()=>{st.teams=[{name:'A',age:4},{name:'B',age:4}]
 assert.equal(vm.runInContext(`(()=>{st.scores=[0,0];st.current={level:3};st.answered=false;mark(true);mark(true);return st.scores[0]})()`,sandbox),300);
 assert.equal(vm.runInContext(`(()=>{st.teams=[{name:'<img src=x>',age:4},{name:'B',age:4}];st.scores=[300,0];finish();return document.getElementById('finalScore').innerHTML.includes('&lt;img')})()`,sandbox),true);
 console.log(JSON.stringify({...report,regressions:['history cap','double score','team name escaping']},null,2));
+// Drive complete games through the real selection/scoring/finish functions.
+selected=['general','flags','capitals','math','words','speed','islamic'].map(cat=>{const e=el();e.dataset.cat=cat;return e;});
+for(const rounds of [6,10,14]){
+  els.rounds.value=String(rounds);els.a1.value='0';els.a2.value='4';
+  const outcome=vm.runInContext(`(()=>{startChallenge();let expected=[0,0],hard=0;for(let i=0;i<st.rounds;i++){expected[st.turn]+=POINTS[st.current.level];if(st.teams[st.turn].age===4&&st.current.level===5)hard++;reveal();mark(true);nextTurn();if(st.qnum<st.rounds)beginQuestion()}clearTimer();return {scores:st.scores,expected,hard,finished:document.getElementById('finish').classList.contains('active')}})()`,sandbox);
+  assert.equal(JSON.stringify(outcome.scores),JSON.stringify(outcome.expected));assert(outcome.hard<=1);assert(outcome.finished);
+}
+console.log('Full game scoring and finish passed for 6, 10, 14 questions');
